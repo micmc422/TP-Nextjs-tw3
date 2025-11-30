@@ -1,6 +1,7 @@
 import { PokeAPI } from "@workspace/pokeapi";
 import { Title } from "@/components/Title";
 import { Text } from "@/components/Text";
+import { PokemonStats } from "@/components/PokemonStats";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
@@ -334,23 +335,7 @@ export default async function PokemonDetail({ params }: { params: Promise<{ name
 
           {/* Stats */}
           <div className="space-y-4">
-            <Title level="h3">Statistiques</Title>
-            <div className="space-y-3">
-              {pokemon.stats.map((s) => (
-                <div key={s.stat.name} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="capitalize font-medium text-muted-foreground">{s.stat.name.replace('-', ' ')}</span>
-                    <span className="font-bold">{s.base_stat}</span>
-                  </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary transition-all duration-500" 
-                      style={{ width: `${Math.min(100, (s.base_stat / 255) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PokemonStats stats={pokemon.stats} />
           </div>
 
           {/* Abilities */}
