@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -10,6 +10,7 @@ import {
   TableRow 
 } from "@workspace/ui/components/table";
 import { Badge } from "@workspace/ui/components/badge";
+import { Select } from "@workspace/ui/components/select";
 import { useRouter } from "next/navigation";
 
 type AbilityListItem = {
@@ -30,6 +31,19 @@ function getIdFromUrl(url: string): string {
   return url.split('/').filter(Boolean).pop() || '';
 }
 
+// Available generations
+const generations = [
+  'generation-i',
+  'generation-ii',
+  'generation-iii',
+  'generation-iv',
+  'generation-v',
+  'generation-vi',
+  'generation-vii',
+  'generation-viii',
+  'generation-ix',
+];
+
 interface AbilityInfiniteListProps {
   initialAbilities: AbilityListItem[];
   initialOffset: number;
@@ -47,6 +61,10 @@ export function AbilityInfiniteList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  
+  // Filter states
+  const [generationFilter, setGenerationFilter] = useState<string>('');
+  const [mainSeriesFilter, setMainSeriesFilter] = useState<string>('');
 
   // Fetch Ability basic info
   const fetchAbilityDetails = useCallback(async (abilities: AbilityListItem[]) => {
@@ -150,8 +168,84 @@ export function AbilityInfiniteList({
     };
   }, [hasMore, loading, loadMore]);
 
+  // Filter abilities based on selected filters
+  const filteredAbilities = useMemo(() => {
+    return abilityList.filter((a) => {
+      const details = abilityDetails.get(a.name);
+      
+      // If details not loaded yet, show the ability (will be filtered when details load)
+      if (!details) return true;
+      
+      // Filter by generation
+      if (generationFilter && details.generation?.name !== generationFilter) {
+        return false;
+      }
+      
+      // Filter by main series
+      if (mainSeriesFilter === 'yes' && !details.is_main_series) {
+        return false;
+      }
+      if (mainSeriesFilter === 'no' && details.is_main_series) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [abilityList, abilityDetails, generationFilter, mainSeriesFilter]);
+
   return (
     <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 p-4 bg-muted/30 rounded-lg">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-muted-foreground">Génération</label>
+          <Select 
+            value={generationFilter} 
+            onChange={(e) => setGenerationFilter(e.target.value)}
+            className="w-48"
+          >
+            <option value="">Toutes les générations</option>
+            {generations.map((gen) => (
+              <option key={gen} value={gen}>
+                {gen.replace(/-/g, ' ').replace('generation', 'Génération')}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-muted-foreground">Série principale</label>
+          <Select 
+            value={mainSeriesFilter} 
+            onChange={(e) => setMainSeriesFilter(e.target.value)}
+            className="w-40"
+          >
+            <option value="">Tous</option>
+            <option value="yes">Oui</option>
+            <option value="no">Non</option>
+          </Select>
+        </div>
+        {(generationFilter || mainSeriesFilter) && (
+          <div className="flex items-end">
+            <button
+              onClick={() => {
+                setGenerationFilter('');
+                setMainSeriesFilter('');
+              }}
+              className="text-sm text-primary hover:underline"
+            >
+              Réinitialiser les filtres
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Results count */}
+      {(generationFilter || mainSeriesFilter) && (
+        <div className="text-sm text-muted-foreground">
+          {filteredAbilities.length} talent(s) trouvé(s)
+        </div>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -164,7 +258,7 @@ export function AbilityInfiniteList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {abilityList.map((a) => {
+            {filteredAbilities.map((a) => {
               const id = getIdFromUrl(a.url);
               const details = abilityDetails.get(a.name);
               

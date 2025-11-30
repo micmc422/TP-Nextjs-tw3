@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -10,6 +10,7 @@ import {
   TableRow 
 } from "@workspace/ui/components/table";
 import { Badge } from "@workspace/ui/components/badge";
+import { Select } from "@workspace/ui/components/select";
 import { useRouter } from "next/navigation";
 
 type MoveListItem = {
@@ -61,6 +62,15 @@ const damageClassColors: Record<string, string> = {
   status: "bg-gray-500",
 };
 
+// Available Pokemon types
+const pokemonTypes = [
+  'fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 'dark',
+  'fairy', 'normal', 'fighting', 'flying', 'poison', 'ground', 'rock', 'bug', 'ghost', 'steel'
+];
+
+// Available damage classes
+const damageClasses = ['physical', 'special', 'status'];
+
 interface MoveInfiniteListProps {
   initialMoves: MoveListItem[];
   initialOffset: number;
@@ -78,6 +88,10 @@ export function MoveInfiniteList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  
+  // Filter states
+  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [damageClassFilter, setDamageClassFilter] = useState<string>('');
 
   // Fetch Move basic info
   const fetchMoveDetails = useCallback(async (moves: MoveListItem[]) => {
@@ -183,8 +197,84 @@ export function MoveInfiniteList({
     };
   }, [hasMore, loading, loadMore]);
 
+  // Filter moves based on selected filters
+  const filteredMoves = useMemo(() => {
+    return moveList.filter((m) => {
+      const details = moveDetails.get(m.name);
+      
+      // If details not loaded yet, show the move (will be filtered when details load)
+      if (!details) return true;
+      
+      // Filter by type
+      if (typeFilter && details.type?.name !== typeFilter) {
+        return false;
+      }
+      
+      // Filter by damage class
+      if (damageClassFilter && details.damage_class?.name !== damageClassFilter) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [moveList, moveDetails, typeFilter, damageClassFilter]);
+
   return (
     <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 p-4 bg-muted/30 rounded-lg">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-muted-foreground">Type</label>
+          <Select 
+            value={typeFilter} 
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="w-40"
+          >
+            <option value="">Tous les types</option>
+            {pokemonTypes.map((type) => (
+              <option key={type} value={type}>
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-muted-foreground">Catégorie</label>
+          <Select 
+            value={damageClassFilter} 
+            onChange={(e) => setDamageClassFilter(e.target.value)}
+            className="w-40"
+          >
+            <option value="">Toutes</option>
+            {damageClasses.map((dc) => (
+              <option key={dc} value={dc}>
+                {dc.charAt(0).toUpperCase() + dc.slice(1)}
+              </option>
+            ))}
+          </Select>
+        </div>
+        {(typeFilter || damageClassFilter) && (
+          <div className="flex items-end">
+            <button
+              onClick={() => {
+                setTypeFilter('');
+                setDamageClassFilter('');
+              }}
+              className="text-sm text-primary hover:underline"
+            >
+              Réinitialiser les filtres
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Results count */}
+      {(typeFilter || damageClassFilter) && (
+        <div className="text-sm text-muted-foreground">
+          {filteredMoves.length} capacité(s) trouvée(s)
+        </div>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -199,7 +289,7 @@ export function MoveInfiniteList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {moveList.map((m) => {
+            {filteredMoves.map((m) => {
               const id = getIdFromUrl(m.url);
               const details = moveDetails.get(m.name);
               
