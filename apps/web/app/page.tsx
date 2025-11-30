@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Next.js Avancé | Monorepo TP",
     description: "Bienvenue dans cette application Next.js avancée avec une configuration monorepo et des composants réutilisables.",
   },
-}
+};
 
 export default function Page() {
   return (
