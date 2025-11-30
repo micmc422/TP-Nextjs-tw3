@@ -59,6 +59,13 @@ export const PokeAPI = {
   move(nameOrId: string | number) {
     return get(`/move/${nameOrId}`);
   },
+  // Berries
+  berry(nameOrId: string | number) {
+    return get(`/berry/${nameOrId}`);
+  },
+  listBerries(limit = 20, offset = 0) {
+    return get<Paginated<NamedAPIResource>>(`/berry?limit=${limit}&offset=${offset}`);
+  },
   // Simple search helper filtering by name from list endpoints
   async searchPokemonByName(query: string, limit = 2000) {
     const data = await this.listPokemon(limit, 0);
