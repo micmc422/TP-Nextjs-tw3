@@ -1,9 +1,19 @@
+import type { Metadata } from "next"
 import { ProjectStructure } from "@/components/ProjectStructure"
 import { Text } from "@/components/Text"
 import { Title } from "@/components/Title"
 import { MonorepoAdvantages } from "@/app/MonorepoAdvantages"
 import { TurboJsonExplanation } from "@/app/TurboJsonExplanation"
 import { Button } from "@workspace/ui/components/button"
+
+export const metadata: Metadata = {
+  title: "Accueil",
+  description: "Bienvenue dans cette application Next.js avancée avec une configuration monorepo et des composants réutilisables. Découvrez l'architecture moderne avec Turborepo.",
+  openGraph: {
+    title: "Next.js Avancé | Monorepo TP",
+    description: "Bienvenue dans cette application Next.js avancée avec une configuration monorepo et des composants réutilisables.",
+  },
+}
 
 export default function Page() {
   return (

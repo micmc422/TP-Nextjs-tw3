@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
 import { PackageExplanation } from "@/app/packages/PackageExplanation";
 import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 import { Title } from "@/components/Title";
+
+export const metadata: Metadata = {
+  title: "Gestion des Packages",
+  description: "Découvrez la structure et la gestion des packages dans un monorepo Next.js. Apprenez à organiser et partager du code entre applications.",
+  openGraph: {
+    title: "Gestion des Packages | Next.js Avancé",
+    description: "Découvrez la structure et la gestion des packages dans un monorepo Next.js.",
+  },
+};
 
 export default function PackagesPage() {
   return (

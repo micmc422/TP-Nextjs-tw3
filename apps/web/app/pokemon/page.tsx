@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { PokeAPI } from "@workspace/pokeapi";
 import { PokemonSearch } from "@/components/PokemonSearch";
 import { PokemonInfiniteList } from "@/components/PokemonInfiniteList";
 import { Title } from "@/components/Title";
 import { Text } from "@/components/Text";
+
+export const metadata: Metadata = {
+  title: "Pokédex",
+  description: "Explorez le monde des Pokémon via notre Pokédex intégré. Recherchez par nom et découvrez les détails de chaque Pokémon.",
+  keywords: ["Pokémon", "Pokédex", "recherche", "liste"],
+  openGraph: {
+    title: "Pokédex | Next.js Avancé",
+    description: "Explorez le monde des Pokémon via notre Pokédex intégré.",
+  },
+};
 
 export default async function PokemonPage({
   searchParams,
