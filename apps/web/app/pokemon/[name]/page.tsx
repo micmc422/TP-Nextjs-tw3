@@ -404,9 +404,11 @@ export default async function PokemonDetail({ params }: { params: Promise<{ name
           <CardContent className="p-0">
             <div className="flex flex-wrap gap-2">
               {moves.map((m) => (
-                <Badge key={m.move.name} variant="outline" className="capitalize">
-                  {m.move.name.replace('-', ' ')}
-                </Badge>
+                <Link key={m.move.name} href={`/pokemon/move/${m.move.name}`}>
+                  <Badge variant="outline" className="capitalize cursor-pointer hover:bg-muted">
+                    {m.move.name.replace('-', ' ')}
+                  </Badge>
+                </Link>
               ))}
             </div>
           </CardContent>
