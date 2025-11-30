@@ -8,16 +8,83 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+// Type definitions for PokeAPI responses
+interface PokemonSpecies {
+  flavor_text_entries: { flavor_text: string; language: { name: string }; version: { name: string } }[];
+  genera: { genus: string; language: { name: string } }[];
+  evolution_chain: { url: string };
+  habitat: { name: string } | null;
+  generation: { name: string };
+  is_legendary: boolean;
+  is_mythical: boolean;
+  capture_rate: number;
+  base_happiness: number;
+  growth_rate: { name: string };
+}
+
+interface EvolutionChain {
+  chain: EvolutionLink;
+}
+
+interface EvolutionLink {
+  species: { name: string; url: string };
+  evolution_details: { min_level: number | null; trigger: { name: string }; item: { name: string } | null }[];
+  evolves_to: EvolutionLink[];
+}
+
+// Helper to get ID from URL
+function getIdFromUrl(url: string): string {
+  return url.split('/').filter(Boolean).pop() || '';
+}
+
+// Flatten evolution chain
+function flattenEvolutionChain(chain: EvolutionLink): { name: string; id: string; level: number | null; trigger: string }[] {
+  const result: { name: string; id: string; level: number | null; trigger: string }[] = [];
+  
+  function traverse(link: EvolutionLink) {
+    result.push({
+      name: link.species.name,
+      id: getIdFromUrl(link.species.url),
+      level: link.evolution_details[0]?.min_level || null,
+      trigger: link.evolution_details[0]?.trigger?.name || 'base',
+    });
+    link.evolves_to.forEach(traverse);
+  }
+  
+  traverse(chain);
+  return result;
+}
+
 export default async function PokemonDetail({ params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
-  let pokemon: any;
+  
+  // Fetch Pokemon data
+  let pokemon: Record<string, unknown>;
+  let species: PokemonSpecies | null = null;
+  let evolutionChain: EvolutionChain | null = null;
+  
   try {
-    pokemon = await PokeAPI.pokemon(name);
-  } catch (e) {
+    pokemon = await PokeAPI.pokemon(name) as Record<string, unknown>;
+    
+    // Try to fetch species info
+    try {
+      species = await PokeAPI.species(name) as PokemonSpecies;
+      
+      // Try to fetch evolution chain
+      if (species?.evolution_chain?.url) {
+        const res = await fetch(species.evolution_chain.url);
+        if (res.ok) {
+          evolutionChain = await res.json();
+        }
+      }
+    } catch {
+      // Species info is optional
+    }
+  } catch {
     notFound();
   }
 
-  // Type colors map (simplified)
+  // Type colors map
   const typeColors: Record<string, string> = {
     fire: "bg-red-500 hover:bg-red-600",
     water: "bg-blue-500 hover:bg-blue-600",
@@ -39,93 +106,263 @@ export default async function PokemonDetail({ params }: { params: Promise<{ name
     steel: "bg-slate-400 hover:bg-slate-500",
   };
 
+  // Get French description or fall back to English
+  const description = species?.flavor_text_entries?.find(
+    (e) => e.language.name === 'fr'
+  )?.flavor_text || species?.flavor_text_entries?.find(
+    (e) => e.language.name === 'en'
+  )?.flavor_text || null;
+
+  // Get genus (category)
+  const genus = species?.genera?.find(
+    (g) => g.language.name === 'fr'
+  )?.genus || species?.genera?.find(
+    (g) => g.language.name === 'en'
+  )?.genus || null;
+
+  // Get evolution chain
+  const evolutions = evolutionChain ? flattenEvolutionChain(evolutionChain.chain) : [];
+
+  // Get some notable moves (limit to 12)
+  const moves = ((pokemon.moves as { move: { name: string } }[]) || []).slice(0, 12);
+
+  // Get game versions where this Pokemon appears
+  const gameIndices = (pokemon.game_indices as { version: { name: string } }[]) || [];
+
+  const sprites = pokemon.sprites as {
+    front_default: string;
+    front_shiny: string;
+    other: { 'official-artwork': { front_default: string; front_shiny: string } };
+  };
+
+  const types = pokemon.types as { type: { name: string } }[];
+  const stats = pokemon.stats as { stat: { name: string }; base_stat: number }[];
+  const abilities = pokemon.abilities as { ability: { name: string }; is_hidden: boolean }[];
+
   return (
-    <div className="container mx-auto py-10 px-4 max-w-4xl">
+    <div className="container mx-auto py-10 px-4 max-w-6xl">
       <div className="mb-6">
         <Link href="/pokemon">
-            <Button variant="outline">← Retour au Pokédex</Button>
+          <Button variant="outline">← Retour au Pokédex</Button>
         </Link>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      {/* Main info section */}
+      <div className="grid md:grid-cols-2 gap-8 mb-12">
         {/* Left Column: Image & Basic Info */}
         <div className="space-y-6">
-            <Card className="overflow-hidden border-2">
-                <div className="bg-muted/30 p-8 flex justify-center items-center aspect-square relative">
-                     <Image 
-                        src={pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default} 
-                        alt={pokemon.name}
-                        fill
-                        className="object-contain p-4 drop-shadow-xl"
-                        priority
-                     />
-                </div>
-            </Card>
-            
-            <div className="flex gap-2 justify-center">
-                {pokemon.types.map((t: any) => (
-                    <Badge 
-                        key={t.type.name} 
-                        className={`text-white px-4 py-1 text-base capitalize ${typeColors[t.type.name] || 'bg-gray-500'}`}
-                    >
-                        {t.type.name}
-                    </Badge>
-                ))}
+          <Card className="overflow-hidden border-2">
+            <div className="bg-muted/30 p-8 flex justify-center items-center aspect-square relative">
+              <Image 
+                src={sprites.other['official-artwork'].front_default || sprites.front_default} 
+                alt={pokemon.name as string}
+                fill
+                className="object-contain p-4 drop-shadow-xl"
+                priority
+              />
             </div>
+          </Card>
+          
+          <div className="flex gap-2 justify-center">
+            {types.map((t) => (
+              <Badge 
+                key={t.type.name} 
+                className={`text-white px-4 py-1 text-base capitalize ${typeColors[t.type.name] || 'bg-gray-500'}`}
+              >
+                {t.type.name}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Shiny variant */}
+          {sprites.front_shiny && (
+            <Card className="p-4">
+              <CardTitle className="text-sm text-center mb-3 text-muted-foreground">Variante Chromatique (Shiny)</CardTitle>
+              <div className="flex justify-center gap-4">
+                <div className="relative w-24 h-24">
+                  <Image 
+                    src={sprites.front_shiny}
+                    alt={`${pokemon.name} shiny`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                {sprites.other['official-artwork'].front_shiny && (
+                  <div className="relative w-24 h-24">
+                    <Image 
+                      src={sprites.other['official-artwork'].front_shiny}
+                      alt={`${pokemon.name} shiny artwork`}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
 
         {/* Right Column: Stats & Details */}
         <div className="space-y-8">
-            <div>
-                <div className="flex items-baseline gap-4">
-                    <Title level="h1" className="capitalize mb-2">{pokemon.name}</Title>
-                    <span className="text-2xl text-muted-foreground font-mono">#{String(pokemon.id).padStart(3, '0')}</span>
-                </div>
-                <div className="flex gap-8 mt-4 text-sm">
-                    <div className="flex flex-col">
-                        <span className="text-muted-foreground">Taille</span>
-                        <span className="font-medium text-lg">{pokemon.height / 10} m</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-muted-foreground">Poids</span>
-                        <span className="font-medium text-lg">{pokemon.weight / 10} kg</span>
-                    </div>
-                </div>
+          <div>
+            <div className="flex items-baseline gap-4 flex-wrap">
+              <Title level="h1" className="capitalize mb-2">{pokemon.name as string}</Title>
+              <span className="text-2xl text-muted-foreground font-mono">#{String(pokemon.id).padStart(3, '0')}</span>
+              {species?.is_legendary && (
+                <Badge className="bg-amber-500 text-white">Légendaire</Badge>
+              )}
+              {species?.is_mythical && (
+                <Badge className="bg-purple-600 text-white">Mythique</Badge>
+              )}
             </div>
+            {genus && (
+              <Text className="text-muted-foreground italic">{genus}</Text>
+            )}
+            
+            <div className="flex gap-8 mt-4 text-sm flex-wrap">
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Taille</span>
+                <span className="font-medium text-lg">{(pokemon.height as number) / 10} m</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Poids</span>
+                <span className="font-medium text-lg">{(pokemon.weight as number) / 10} kg</span>
+              </div>
+              {species?.habitat && (
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Habitat</span>
+                  <span className="font-medium text-lg capitalize">{species.habitat.name}</span>
+                </div>
+              )}
+              {species?.capture_rate && (
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Taux de capture</span>
+                  <span className="font-medium text-lg">{species.capture_rate}</span>
+                </div>
+              )}
+            </div>
+          </div>
 
-            <div className="space-y-4">
-                <Title level="h3">Statistiques</Title>
-                <div className="space-y-3">
-                    {pokemon.stats.map((s: any) => (
-                        <div key={s.stat.name} className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                                <span className="capitalize font-medium text-muted-foreground">{s.stat.name.replace('-', ' ')}</span>
-                                <span className="font-bold">{s.base_stat}</span>
-                            </div>
-                            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-primary transition-all duration-500" 
-                                    style={{ width: `${Math.min(100, (s.base_stat / 255) * 100)}%` }}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+          {/* Description */}
+          {description && (
+            <div className="space-y-2">
+              <Title level="h3">Description</Title>
+              <Text className="text-muted-foreground leading-relaxed">
+                {description.replace(/\f/g, ' ').replace(/\n/g, ' ')}
+              </Text>
             </div>
+          )}
 
-            <div className="space-y-4">
-                <Title level="h3">Talents (Abilities)</Title>
-                <div className="flex flex-wrap gap-2">
-                    {pokemon.abilities.map((a: any) => (
-                        <Badge key={a.ability.name} variant="secondary" className="capitalize">
-                            {a.ability.name.replace('-', ' ')}
-                            {a.is_hidden && <span className="ml-1 text-xs opacity-50">(Caché)</span>}
-                        </Badge>
-                    ))}
+          {/* Stats */}
+          <div className="space-y-4">
+            <Title level="h3">Statistiques</Title>
+            <div className="space-y-3">
+              {stats.map((s) => (
+                <div key={s.stat.name} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="capitalize font-medium text-muted-foreground">{s.stat.name.replace('-', ' ')}</span>
+                    <span className="font-bold">{s.base_stat}</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary transition-all duration-500" 
+                      style={{ width: `${Math.min(100, (s.base_stat / 255) * 100)}%` }}
+                    />
+                  </div>
                 </div>
+              ))}
             </div>
+          </div>
+
+          {/* Abilities */}
+          <div className="space-y-4">
+            <Title level="h3">Talents (Abilities)</Title>
+            <div className="flex flex-wrap gap-2">
+              {abilities.map((a) => (
+                <Badge key={a.ability.name} variant="secondary" className="capitalize">
+                  {a.ability.name.replace('-', ' ')}
+                  {a.is_hidden && <span className="ml-1 text-xs opacity-50">(Caché)</span>}
+                </Badge>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Evolution Chain */}
+      {evolutions.length > 1 && (
+        <Card className="p-6 mb-8">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle>Chaîne d&apos;évolution</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {evolutions.map((evo, index) => (
+                <div key={evo.name} className="flex items-center gap-4">
+                  <Link href={`/pokemon/${evo.name}`} className="group">
+                    <div className="flex flex-col items-center p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="relative w-20 h-20 mb-2">
+                        <Image
+                          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evo.id}.png`}
+                          alt={evo.name}
+                          fill
+                          className="object-contain group-hover:scale-110 transition-transform"
+                        />
+                      </div>
+                      <span className={`capitalize text-sm font-medium ${evo.name === name ? 'text-primary' : ''}`}>
+                        {evo.name}
+                      </span>
+                      {evo.level && (
+                        <span className="text-xs text-muted-foreground">Niv. {evo.level}</span>
+                      )}
+                    </div>
+                  </Link>
+                  {index < evolutions.length - 1 && (
+                    <span className="text-2xl text-muted-foreground">→</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Moves */}
+      {moves.length > 0 && (
+        <Card className="p-6 mb-8">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle>Capacités (Moves)</CardTitle>
+            <Text className="text-sm text-muted-foreground">Quelques capacités que ce Pokémon peut apprendre</Text>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="flex flex-wrap gap-2">
+              {moves.map((m) => (
+                <Badge key={m.move.name} variant="outline" className="capitalize">
+                  {m.move.name.replace('-', ' ')}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Game Appearances */}
+      {gameIndices.length > 0 && (
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle>Apparitions dans les jeux</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="flex flex-wrap gap-2">
+              {gameIndices.map((g) => (
+                <Badge key={g.version.name} variant="secondary" className="capitalize">
+                  {g.version.name.replace('-', ' ')}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
