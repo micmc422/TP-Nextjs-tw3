@@ -59,6 +59,9 @@ export const PokeAPI = {
   move(nameOrId: string | number) {
     return get(`/move/${nameOrId}`);
   },
+  listMoves(limit = 20, offset = 0) {
+    return get<Paginated<NamedAPIResource>>(`/move?limit=${limit}&offset=${offset}`);
+  },
   // Berries
   berry(nameOrId: string | number) {
     return get(`/berry/${nameOrId}`);

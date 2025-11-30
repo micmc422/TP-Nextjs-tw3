@@ -49,6 +49,9 @@ export function NavigationMain() {
                 <ListItem href="/pokemon/berry" title="Baies">
                   Découvrez les différentes baies, leurs saveurs et fermetés.
                 </ListItem>
+                <ListItem href="/pokemon/move" title="Capacités">
+                  Explorez toutes les capacités et leurs effets.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
