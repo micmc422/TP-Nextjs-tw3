@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/componen
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 // Type definitions for PokeAPI responses
 interface Pokemon {
@@ -70,6 +71,77 @@ function flattenEvolutionChain(chain: EvolutionLink): { name: string; id: string
   
   traverse(chain);
   return result;
+}
+
+// Generate dynamic metadata for SEO
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ name: string }> 
+}): Promise<Metadata> {
+  const { name } = await params;
+  
+  try {
+    const pokemon = await PokeAPI.pokemon(name) as Pokemon;
+    
+    // Try to get species info for description
+    let description = `Découvrez ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}, un Pokémon de type ${pokemon.types.map(t => t.type.name).join('/')}. Taille: ${pokemon.height / 10}m, Poids: ${pokemon.weight / 10}kg.`;
+    
+    try {
+      const species = await PokeAPI.species(name) as PokemonSpecies;
+      const frenchEntry = species?.flavor_text_entries?.find(
+        (e) => e.language.name === 'fr'
+      )?.flavor_text;
+      const englishEntry = species?.flavor_text_entries?.find(
+        (e) => e.language.name === 'en'
+      )?.flavor_text;
+      
+      if (frenchEntry || englishEntry) {
+        description = (frenchEntry || englishEntry || '').replace(/\f/g, ' ').replace(/\n/g, ' ');
+      }
+    } catch {
+      // Species info is optional
+    }
+    
+    const pokemonName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+    const imageUrl = pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default;
+    
+    return {
+      title: `${pokemonName} #${String(pokemon.id).padStart(3, '0')} | Pokédex`,
+      description,
+      keywords: [
+        pokemon.name,
+        ...pokemon.types.map(t => t.type.name),
+        'pokemon',
+        'pokédex',
+        ...pokemon.abilities.map(a => a.ability.name)
+      ],
+      openGraph: {
+        title: `${pokemonName} #${String(pokemon.id).padStart(3, '0')} | Pokédex`,
+        description,
+        images: imageUrl ? [
+          {
+            url: imageUrl,
+            width: 475,
+            height: 475,
+            alt: `Image de ${pokemonName}`,
+          }
+        ] : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${pokemonName} #${String(pokemon.id).padStart(3, '0')} | Pokédex`,
+        description,
+        images: imageUrl ? [imageUrl] : [],
+      },
+    };
+  } catch {
+    return {
+      title: 'Pokémon non trouvé | Pokédex',
+      description: 'Ce Pokémon n\'a pas été trouvé dans le Pokédex.',
+    };
+  }
 }
 
 export default async function PokemonDetail({ params }: { params: Promise<{ name: string }> }) {
