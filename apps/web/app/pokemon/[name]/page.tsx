@@ -345,10 +345,12 @@ export default async function PokemonDetail({ params }: { params: Promise<{ name
             <Title level="h3">Talents (Abilities)</Title>
             <div className="flex flex-wrap gap-2">
               {pokemon.abilities.map((a) => (
-                <Badge key={a.ability.name} variant="secondary" className="capitalize">
-                  {a.ability.name.replace('-', ' ')}
-                  {a.is_hidden && <span className="ml-1 text-xs opacity-50">(Caché)</span>}
-                </Badge>
+                <Link key={a.ability.name} href={`/pokemon/ability/${a.ability.name}`}>
+                  <Badge variant="secondary" className="capitalize cursor-pointer hover:bg-muted">
+                    {a.ability.name.replace('-', ' ')}
+                    {a.is_hidden && <span className="ml-1 text-xs opacity-50">(Caché)</span>}
+                  </Badge>
+                </Link>
               ))}
             </div>
           </div>

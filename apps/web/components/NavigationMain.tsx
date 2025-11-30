@@ -52,6 +52,9 @@ export function NavigationMain() {
                 <ListItem href="/pokemon/move" title="Capacités">
                   Explorez toutes les capacités et leurs effets.
                 </ListItem>
+                <ListItem href="/pokemon/ability" title="Talents">
+                  Découvrez les talents et les Pokémon qui les possèdent.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

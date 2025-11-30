@@ -55,6 +55,9 @@ export const PokeAPI = {
   ability(nameOrId: string | number) {
     return get(`/ability/${nameOrId}`);
   },
+  listAbilities(limit = 20, offset = 0) {
+    return get<Paginated<NamedAPIResource>>(`/ability?limit=${limit}&offset=${offset}`);
+  },
   // Moves
   move(nameOrId: string | number) {
     return get(`/move/${nameOrId}`);
