@@ -82,6 +82,14 @@ export const PokeAPI = {
     const q = query.toLowerCase();
     return data.results.filter((r) => r.name.includes(q));
   },
+  // Get Pokemon by type
+  async getPokemonByType(typeName: string): Promise<NamedAPIResource[]> {
+    type TypeResponse = {
+      pokemon: { pokemon: NamedAPIResource }[];
+    };
+    const data = await get<TypeResponse>(`/type/${typeName}`);
+    return data.pokemon.map((p) => p.pokemon);
+  },
 };
 
 export type PokeAPIClient = typeof PokeAPI;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PokeAPI } from "@workspace/pokeapi";
 import { PokemonSearch } from "@/components/PokemonSearch";
+import { PokemonFilters } from "@/components/PokemonFilters";
 import { PokemonInfiniteList } from "@/components/PokemonInfiniteList";
 import { Title } from "@/components/Title";
 import { Text } from "@/components/Text";
@@ -20,16 +21,27 @@ export default async function PokemonPage({
 }: {
   searchParams: Promise<{
     q?: string;
+    type?: string;
   }>;
 }) {
-  const { q } = await searchParams;
+  const { q, type } = await searchParams;
   const query = q || '';
+  const typeFilter = type || '';
   const limit = 20;
 
   let pokemonList = [];
   
-  if (query) {
-    // Search mode
+  if (typeFilter) {
+    // Filter by type mode
+    let typePokemon = await PokeAPI.getPokemonByType(typeFilter);
+    // Also apply search filter if provided
+    if (query) {
+      const q = query.toLowerCase();
+      typePokemon = typePokemon.filter((p) => p.name.includes(q));
+    }
+    pokemonList = typePokemon;
+  } else if (query) {
+    // Search mode only
     pokemonList = await PokeAPI.searchPokemonByName(query);
   } else {
     // Initial load for infinite scroll
@@ -45,18 +57,22 @@ export default async function PokemonPage({
           Explorez le monde des Pokémon via notre API intégrée. 
           Utilisez la recherche pour filtrer par nom, ou faites défiler pour découvrir plus de Pokémon !
         </Text>
-        <PokemonSearch />
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl justify-center items-start">
+          <PokemonSearch />
+          <PokemonFilters />
+        </div>
       </div>
 
       <PokemonInfiniteList 
         initialPokemon={pokemonList}
         initialOffset={limit}
         searchQuery={query || undefined}
+        typeFilter={typeFilter || undefined}
       />
       
       {pokemonList.length === 0 && (
         <div className="text-center py-20">
-            <Text>Aucun Pokémon trouvé pour &quot;{query}&quot;</Text>
+            <Text>Aucun Pokémon trouvé{query ? ` pour "${query}"` : ''}{typeFilter ? ` de type "${typeFilter}"` : ''}</Text>
         </div>
       )}
     </div>

@@ -51,18 +51,20 @@ interface PokemonInfiniteListProps {
   initialPokemon: PokemonListItem[];
   initialOffset: number;
   searchQuery?: string;
+  typeFilter?: string;
 }
 
 export function PokemonInfiniteList({
   initialPokemon,
   initialOffset,
-  searchQuery
+  searchQuery,
+  typeFilter
 }: PokemonInfiniteListProps) {
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>(initialPokemon);
   const [pokemonDetails, setPokemonDetails] = useState<Map<string, PokemonBasicInfo>>(new Map());
   const [offset, setOffset] = useState(initialOffset);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(!searchQuery && initialPokemon.length === 20);
+  const [hasMore, setHasMore] = useState(!searchQuery && !typeFilter && initialPokemon.length === 20);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -119,7 +121,7 @@ export function PokemonInfiniteList({
 
   // Load more Pokemon
   const loadMore = useCallback(async () => {
-    if (loading || !hasMore || searchQuery) return;
+    if (loading || !hasMore || searchQuery || typeFilter) return;
 
     setLoading(true);
     try {
@@ -139,7 +141,7 @@ export function PokemonInfiniteList({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, offset, searchQuery, fetchPokemonDetails]);
+  }, [loading, hasMore, offset, searchQuery, typeFilter, fetchPokemonDetails]);
 
   // Setup intersection observer for infinite scroll
   useEffect(() => {
@@ -219,8 +221,13 @@ export function PokemonInfiniteList({
             <span>Chargement...</span>
           </div>
         )}
-        {!hasMore && pokemonList.length > 0 && !searchQuery && (
+        {!hasMore && pokemonList.length > 0 && !searchQuery && !typeFilter && (
           <span className="text-muted-foreground">Tous les Pokémon ont été chargés !</span>
+        )}
+        {typeFilter && pokemonList.length > 0 && (
+          <span className="text-muted-foreground">
+            {pokemonList.length} Pokémon de type {typeFilter} trouvés
+          </span>
         )}
       </div>
     </>
