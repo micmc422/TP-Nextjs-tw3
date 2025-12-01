@@ -72,7 +72,11 @@ export default async function PokemonPage({
       
       {pokemonList.length === 0 && (
         <div className="text-center py-20">
-            <Text>Aucun Pokémon trouvé{query ? ` pour "${query}"` : ''}{typeFilter ? ` de type "${typeFilter}"` : ''}</Text>
+            <Text>
+              Aucun Pokémon trouvé
+              {query && ` pour "${query}"`}
+              {typeFilter && ` de type "${typeFilter}"`}
+            </Text>
         </div>
       )}
     </div>
