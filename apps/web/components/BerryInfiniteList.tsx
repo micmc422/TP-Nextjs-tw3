@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -10,10 +10,8 @@ import {
   TableRow 
 } from "@workspace/ui/components/table";
 import { Badge } from "@workspace/ui/components/badge";
-import { Select } from "@workspace/ui/components/select";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { typeColors, pokemonTypes, firmnessLevels, formatName } from "@/lib/pokemon-constants";
 
 type BerryListItem = {
   name: string;
@@ -33,6 +31,28 @@ function getIdFromUrl(url: string): string {
   return url.split('/').filter(Boolean).pop() || '';
 }
 
+// Type colors map
+const typeColors: Record<string, string> = {
+  fire: "bg-red-500",
+  water: "bg-blue-500",
+  grass: "bg-green-500",
+  electric: "bg-yellow-500",
+  psychic: "bg-pink-500",
+  ice: "bg-cyan-500",
+  dragon: "bg-indigo-500",
+  dark: "bg-slate-800",
+  fairy: "bg-rose-400",
+  normal: "bg-gray-400",
+  fighting: "bg-orange-700",
+  flying: "bg-sky-400",
+  poison: "bg-purple-500",
+  ground: "bg-amber-600",
+  rock: "bg-stone-500",
+  bug: "bg-lime-500",
+  ghost: "bg-violet-700",
+  steel: "bg-slate-400",
+};
+
 interface BerryInfiniteListProps {
   initialBerries: BerryListItem[];
   initialOffset: number;
@@ -50,10 +70,6 @@ export function BerryInfiniteList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  
-  // Filter states
-  const [typeFilter, setTypeFilter] = useState<string>('');
-  const [firmnessFilter, setFirmnessFilter] = useState<string>('');
 
   // Fetch Berry basic info
   const fetchBerryDetails = useCallback(async (berries: BerryListItem[]) => {
@@ -157,84 +173,8 @@ export function BerryInfiniteList({
     };
   }, [hasMore, loading, loadMore]);
 
-  // Filter berries based on selected filters
-  const filteredBerries = useMemo(() => {
-    return berryList.filter((b) => {
-      const details = berryDetails.get(b.name);
-      
-      // If details not loaded yet, show the berry (will be filtered when details load)
-      if (!details) return true;
-      
-      // Filter by type
-      if (typeFilter && details.natural_gift_type?.name !== typeFilter) {
-        return false;
-      }
-      
-      // Filter by firmness
-      if (firmnessFilter && details.firmness.name !== firmnessFilter) {
-        return false;
-      }
-      
-      return true;
-    });
-  }, [berryList, berryDetails, typeFilter, firmnessFilter]);
-
   return (
     <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 p-4 bg-muted/30 rounded-lg">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-muted-foreground">Type (Cadeau Naturel)</label>
-          <Select 
-            value={typeFilter} 
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="w-40"
-          >
-            <option value="">Tous les types</option>
-            {pokemonTypes.map((type) => (
-              <option key={type} value={type}>
-                {formatName(type)}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-muted-foreground">Fermeté</label>
-          <Select 
-            value={firmnessFilter} 
-            onChange={(e) => setFirmnessFilter(e.target.value)}
-            className="w-40"
-          >
-            <option value="">Toutes</option>
-            {firmnessLevels.map((firmness) => (
-              <option key={firmness} value={firmness}>
-                {formatName(firmness)}
-              </option>
-            ))}
-          </Select>
-        </div>
-        {(typeFilter || firmnessFilter) && (
-          <div className="flex items-end">
-            <button
-              onClick={() => {
-                setTypeFilter('');
-                setFirmnessFilter('');
-              }}
-              className="text-sm text-primary hover:underline"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Results count */}
-      {(typeFilter || firmnessFilter) && (
-        <div className="text-sm text-muted-foreground">
-          {filteredBerries.length} baie(s) trouvée(s)
-        </div>
-      )}
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -248,7 +188,7 @@ export function BerryInfiniteList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredBerries.map((b) => {
+            {berryList.map((b) => {
               const id = getIdFromUrl(b.url);
               const details = berryDetails.get(b.name);
               const imageUrl = `https://raw.githubusercontent.com/msikma/pokesprite/master/items/berry/${b.name}.png`;
@@ -266,8 +206,7 @@ export function BerryInfiniteList({
                         alt={b.name}
                         width={32}
                         height={32}
-                        className="object-contain"
-                        style={{ imageRendering: 'pixelated' }}
+                        className="object-contain pixelated"
                         unoptimized
                       />
                     </div>

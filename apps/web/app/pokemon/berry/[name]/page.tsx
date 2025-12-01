@@ -182,7 +182,7 @@ export default async function BerryDetail({ params }: { params: Promise<{ name: 
                 className="object-contain drop-shadow-xl"
                 style={{ imageRendering: 'pixelated' }}
                 unoptimized
-                priority
+               priority
               />
             </div>
           </Card>

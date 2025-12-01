@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { cn } from "@workspace/ui/lib/utils"
 import {
   NavigationMenu,
@@ -43,9 +42,6 @@ export function NavigationMain() {
                     </a>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/pokemon" title="Liste des Pokémon">
-                  Rechercher et voir les détails de tous les Pokémon.
-                </ListItem>
                 <ListItem href="/pokemon/berry" title="Baies">
                   Découvrez les différentes baies, leurs saveurs et fermetés.
                 </ListItem>
