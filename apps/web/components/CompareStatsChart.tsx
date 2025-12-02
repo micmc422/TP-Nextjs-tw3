@@ -89,21 +89,19 @@ export function CompareStatsChart({ pokemon }: CompareStatsChartProps) {
                   </div>
                 )}
               />
-              {pokemon.map((p, index) => {
-                const colorSet = POKEMON_COLORS[index];
-                if (!colorSet) return null;
-                return (
+              {pokemon
+                .filter((_, index) => index < POKEMON_COLORS.length)
+                .map((p, index) => (
                   <Radar
                     key={p.id}
                     name={p.name}
                     dataKey={`pokemon${index}`}
-                    stroke={colorSet.stroke}
-                    fill={colorSet.fill}
+                    stroke={POKEMON_COLORS[index]!.stroke}
+                    fill={POKEMON_COLORS[index]!.fill}
                     fillOpacity={0.2}
                     strokeWidth={2}
                   />
-                );
-              })}
+                ))}
             </RadarChart>
           </ResponsiveContainer>
         </div>

@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ComparePokemon } from "./PokemonCompareContext"
 import Image from "next/image"
 import { ArrowUp, ArrowDown, Minus } from "lucide-react"
+import { useMemo } from "react"
 
 interface CompareDetailsProps {
   pokemon: ComparePokemon[]
@@ -56,8 +57,27 @@ function StatCompareIndicator({ values, currentIndex }: { values: number[]; curr
   return <Minus className="w-4 h-4 text-muted-foreground inline ml-1" />
 }
 
+function analyzeTypes(pokemon: ComparePokemon[]) {
+  const allTypes = pokemon.flatMap((p) => p.types.map((t) => t.type.name))
+  const typeCount = allTypes.reduce((acc, type) => {
+    acc[type] = (acc[type] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  const commonTypes = Object.entries(typeCount)
+    .filter(([, count]) => count > 1)
+    .map(([type]) => type)
+  
+  const uniqueTypes = Object.entries(typeCount)
+    .filter(([, count]) => count === 1)
+    .map(([type]) => type)
+
+  return { commonTypes, uniqueTypes }
+}
+
 export function CompareDetails({ pokemon }: CompareDetailsProps) {
   const statNames = pokemon[0]?.stats.map((s) => s.stat.name) || []
+  const { commonTypes, uniqueTypes } = useMemo(() => analyzeTypes(pokemon), [pokemon])
 
   return (
     <div className="space-y-6">
@@ -239,58 +259,37 @@ export function CompareDetails({ pokemon }: CompareDetailsProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Common types */}
-            {(() => {
-              const allTypes = pokemon.flatMap((p) => p.types.map((t) => t.type.name))
-              const typeCount = allTypes.reduce((acc, type) => {
-                acc[type] = (acc[type] || 0) + 1
-                return acc
-              }, {} as Record<string, number>)
-              
-              const commonTypes = Object.entries(typeCount)
-                .filter(([, count]) => count > 1)
-                .map(([type]) => type)
-              
-              const uniqueTypes = Object.entries(typeCount)
-                .filter(([, count]) => count === 1)
-                .map(([type]) => type)
-
-              return (
-                <>
-                  {commonTypes.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Types en commun</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {commonTypes.map((type) => (
-                          <Badge
-                            key={type}
-                            className={`text-white capitalize ${typeColors[type] || 'bg-gray-500'}`}
-                          >
-                            {type}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {uniqueTypes.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Types uniques</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {uniqueTypes.map((type) => (
-                          <Badge
-                            key={type}
-                            variant="outline"
-                            className={`capitalize ${typeColors[type] || ''}`}
-                          >
-                            {type}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </>
-              )
-            })()}
+            {commonTypes.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">Types en commun</h4>
+                <div className="flex flex-wrap gap-2">
+                  {commonTypes.map((type) => (
+                    <Badge
+                      key={type}
+                      className={`text-white capitalize ${typeColors[type] || 'bg-gray-500'}`}
+                    >
+                      {type}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            {uniqueTypes.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">Types uniques</h4>
+                <div className="flex flex-wrap gap-2">
+                  {uniqueTypes.map((type) => (
+                    <Badge
+                      key={type}
+                      variant="outline"
+                      className={`capitalize ${typeColors[type] || ''}`}
+                    >
+                      {type}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
