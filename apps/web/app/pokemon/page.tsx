@@ -59,6 +59,7 @@ export default async function PokemonPage({
         <Text size="lg" className="max-w-2xl">
           Explorez le monde des Pokémon via notre API intégrée. 
           Utilisez la recherche pour filtrer par nom, ou faites défiler pour découvrir plus de Pokémon !
+          Survolez les cartes pour ajouter des Pokémon à la comparaison.
         </Text>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-2xl justify-center items-center">
           <PokemonSearch />

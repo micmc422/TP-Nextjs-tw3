@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/componen
 import { Badge } from "@workspace/ui/components/badge";
 import Image from "next/image";
 import Link from "next/link";
+import { AddToCompareButton } from "./AddToCompareButton";
 
 type PokemonListItem = {
   name: string;
@@ -183,39 +184,50 @@ console.log('Rendering PokemonInfiniteList with', { searchQuery, typeFilter });
           const id = getIdFromUrl(p.url);
           const details = pokemonDetails.get(p.name);
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+          const pokemonId = parseInt(id, 10);
 
           return (
-            <Link href={`/pokemon/${p.name}`} key={p.name} className="group">
-              <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden border-muted">
-                <CardHeader className="p-2 sm:p-4 bg-muted/20 group-hover:bg-muted/40 transition-colors">
-                  <div className="relative w-full aspect-square">
-                    <Image
-                      src={imageUrl}
-                      alt={p.name}
-                      fill
-                      className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="p-2 sm:p-4 text-center space-y-1 sm:space-y-2">
-                  <span className="text-xs font-mono text-muted-foreground">#{id.padStart(3, '0')}</span>
-                  <CardTitle className="capitalize text-sm sm:text-lg">{p.name}</CardTitle>
-                  {details && (
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {details.types.map((t) => (
-                        <Badge
-                          key={t.type.name}
-                          className={`text-white text-[10px] sm:text-xs capitalize ${typeColors[t.type.name] || 'bg-gray-500'}`}
-                        >
-                          {t.type.name}
-                        </Badge>
-                      ))}
+            <div key={p.name} className="group relative">
+              <Link href={`/pokemon/${p.name}`}>
+                <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden border-muted">
+                  <CardHeader className="p-2 sm:p-4 bg-muted/20 group-hover:bg-muted/40 transition-colors">
+                    <div className="relative w-full aspect-square">
+                      <Image
+                        src={imageUrl}
+                        alt={p.name}
+                        fill
+                        className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                      />
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </Link>
+                  </CardHeader>
+                  <CardContent className="p-2 sm:p-4 text-center space-y-1 sm:space-y-2">
+                    <span className="text-xs font-mono text-muted-foreground">#{id.padStart(3, '0')}</span>
+                    <CardTitle className="capitalize text-sm sm:text-lg">{p.name}</CardTitle>
+                    {details && (
+                      <div className="flex flex-wrap gap-1 justify-center">
+                        {details.types.map((t) => (
+                          <Badge
+                            key={t.type.name}
+                            className={`text-white text-[10px] sm:text-xs capitalize ${typeColors[t.type.name] || 'bg-gray-500'}`}
+                          >
+                            {t.type.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+              {/* Compare button */}
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <AddToCompareButton
+                  pokemonId={pokemonId}
+                  pokemonName={p.name}
+                  variant="icon"
+                />
+              </div>
+            </div>
           );
         })}
       </div>
