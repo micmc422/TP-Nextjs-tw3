@@ -85,6 +85,13 @@ export function NavigationMain() {
                 >
                   Talents
                 </Link>
+                <Link
+                  href="/pokemon/create"
+                  className="block py-1.5 text-sm hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Créateur
+                </Link>
               </div>
             </div>
             <Link
@@ -137,6 +144,9 @@ export function NavigationMain() {
                     </ListItem>
                     <ListItem href="/pokemon/ability" title="Talents">
                       Découvrez les talents et les Pokémon qui les possèdent.
+                    </ListItem>
+                    <ListItem href="/pokemon/create" title="Créateur">
+                      Inventez votre propre Pokémon et générez un PDF.
                     </ListItem>
                   </ul>
                 </NavigationMenuContent>
