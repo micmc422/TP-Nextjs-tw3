@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import "@workspace/ui/globals.css"
 import { Providers } from "@/components/providers"
 import { NavigationMain } from "@/components/NavigationMain"
+import { CompareFloatingBar } from "@/components/CompareFloatingBar"
 
 export const metadata: Metadata = {
   title: {
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Providers>
           <NavigationMain />
           {children}
+          <CompareFloatingBar />
           </Providers>
       </body>
     </html>

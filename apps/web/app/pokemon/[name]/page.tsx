@@ -1,6 +1,7 @@
 import { PokeAPI } from "@workspace/pokeapi";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PokemonDetailHeader } from "@/components/PokemonDetailHeader";
 
 // Type definitions for PokeAPI responses
 interface Pokemon {
@@ -93,12 +94,13 @@ export async function generateMetadata({
 export default async function PokemonDetail({ params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
 
+  let pokemon: Pokemon;
   try {
     // Check if pokemon exists
-    await PokeAPI.pokemon(name);
+    pokemon = await PokeAPI.pokemon(name) as Pokemon;
   } catch {
     notFound();
   }
 
-  return null;
+  return <PokemonDetailHeader pokemonId={pokemon.id} pokemonName={pokemon.name} />;
 }

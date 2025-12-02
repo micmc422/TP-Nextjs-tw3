@@ -58,6 +58,13 @@ export function NavigationMain() {
                   Pokédex
                 </Link>
                 <Link
+                  href="/pokemon/compare"
+                  className="block py-1.5 text-sm hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Comparateur
+                </Link>
+                <Link
                   href="/pokemon/berry"
                   className="block py-1.5 text-sm hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
@@ -119,6 +126,9 @@ export function NavigationMain() {
                         </Link>
                       </NavigationMenuLink>
                     </li>
+                    <ListItem href="/pokemon/compare" title="Comparateur">
+                      Comparez les statistiques de différents Pokémon.
+                    </ListItem>
                     <ListItem href="/pokemon/berry" title="Baies">
                       Découvrez les différentes baies, leurs saveurs et fermetés.
                     </ListItem>
