@@ -22,7 +22,6 @@
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./context/*": "./src/context/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts",
-    "./hooks/useFormAction": "./src/hooks/useFormAction.ts"
+    "./hooks/*": "./src/hooks/*.ts"
   }
 }

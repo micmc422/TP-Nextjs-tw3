@@ -139,14 +139,13 @@ function StatSlider({
 export function PokemonCreatorForm() {
   const formRef = React.useRef<HTMLFormElement>(null)
   const [formData, setFormData] = React.useState<PokemonFormData>(initialFormData)
-  
-  // État optimiste pour afficher immédiatement le feedback
-  const [optimisticPending, setOptimisticPending] = React.useOptimistic(false)
 
   // Utilisation du hook useFormAction pour gérer les server actions
   const { state, isPending, formAction } = useFormAction<PokemonFormData, PokemonFormState["data"]>({
     action: createPokemonPdfAction,
     initialState: { success: false },
+    pendingMessage: "Génération en cours...",
+    errorMessage: "Une erreur est survenue",
     onSuccess: (data) => {
       if (data?.pdfBase64) {
         // Télécharger automatiquement le PDF
@@ -172,20 +171,12 @@ export function PokemonCreatorForm() {
     formRef.current?.reset()
   }
 
-  const handleSubmit = (formDataFromEvent: FormData) => {
-    // Activer l'état optimiste immédiatement
-    React.startTransition(() => {
-      setOptimisticPending(true)
-    })
-    formAction(formDataFromEvent)
-  }
-
   const selectedType = pokemonTypes.find((t) => t.value === formData.type)
 
   return (
     <div className="space-y-8">
       {/* État optimiste : affichage pendant l'envoi */}
-      {(isPending || optimisticPending) && (
+      {isPending && (
         <Card className="border-primary/50 bg-primary/5">
           <CardContent className="flex items-center gap-4 py-4">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -240,7 +231,7 @@ export function PokemonCreatorForm() {
         </Card>
       )}
 
-      <form ref={formRef} action={handleSubmit} className="space-y-8">
+      <form ref={formRef} action={formAction} className="space-y-8">
         {/* Informations de base */}
         <Card>
           <CardHeader>

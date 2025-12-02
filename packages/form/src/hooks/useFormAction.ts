@@ -26,6 +26,10 @@ export interface UseFormActionOptions<TInput, TOutput> {
   onError?: (state: FormActionState<TOutput>) => void
   /** Transform form values to FormData before sending */
   transformData?: (values: TInput) => FormData
+  /** Custom message shown during pending state */
+  pendingMessage?: string
+  /** Custom message shown when an error occurs */
+  errorMessage?: string
 }
 
 /**
@@ -84,6 +88,8 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
   onSuccess,
   onError,
   transformData,
+  pendingMessage = "Submitting...",
+  errorMessage = "An error occurred",
 }: UseFormActionOptions<TInput, TOutput>): UseFormActionReturn<TInput, TOutput> {
   const [state, setState] = React.useState<FormActionState<TOutput>>(initialState)
   const [isPending, startTransition] = React.useTransition()
@@ -104,7 +110,7 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     (formData: FormData) => {
       startTransition(async () => {
         // Set optimistic pending state
-        setOptimisticState({ success: false, message: "Envoi en cours..." })
+        setOptimisticState({ success: false, message: pendingMessage })
 
         try {
           const result = await action(state, formData)
@@ -118,14 +124,14 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
         } catch (error) {
           const errorState: FormActionState<TOutput> = {
             success: false,
-            message: error instanceof Error ? error.message : "Une erreur est survenue",
+            message: error instanceof Error ? error.message : errorMessage,
           }
           setState(errorState)
           onError?.(errorState)
         }
       })
     },
-    [action, state, onSuccess, onError, setOptimisticState]
+    [action, state, onSuccess, onError, setOptimisticState, pendingMessage, errorMessage]
   )
 
   const submitWithValues = React.useCallback(
