@@ -42,9 +42,9 @@ export function PokemonFilters() {
   };
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="w-full max-w-xs flex items-center space-x-2">
       <label htmlFor="type-filter" className="block text-sm font-medium mb-1">
-        Filtrer par type
+        Type
       </label>
       <Select
         id="type-filter"

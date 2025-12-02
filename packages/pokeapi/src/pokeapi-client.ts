@@ -6,6 +6,9 @@ export type NamedAPIResource = { name: string; url: string };
 export type Paginated<T> = { count: number; next: string | null; previous: string | null; results: T[] };
 
 async function get<T>(path: string): Promise<T> {
+  // Simulate 300ms delay
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
   const res = await fetch(`${BASE}${path}`);
   if (!res.ok) throw new Error(`PokeAPI error ${res.status}: ${res.statusText}`);
   return res.json() as Promise<T>;

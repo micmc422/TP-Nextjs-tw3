@@ -5,6 +5,9 @@ import { PokemonFilters } from "@/components/PokemonFilters";
 import { PokemonInfiniteList } from "@/components/PokemonInfiniteList";
 import { Title } from "@/components/Title";
 import { Text } from "@/components/Text";
+import { Button } from "@workspace/ui/components/button";
+import Link from "next/link";
+import { RefreshCw } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pokédex",
@@ -57,17 +60,29 @@ export default async function PokemonPage({
           Explorez le monde des Pokémon via notre API intégrée. 
           Utilisez la recherche pour filtrer par nom, ou faites défiler pour découvrir plus de Pokémon !
         </Text>
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl justify-center items-start">
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl justify-center items-center">
           <PokemonSearch />
           <PokemonFilters />
+          <Button 
+            variant="outline" 
+            size="icon"
+            asChild
+            className={!query && !typeFilter ? "opacity-50 pointer-events-none" : ""}
+            title="Réinitialiser les filtres"
+          >
+            <Link href="/pokemon">
+              <RefreshCw className="h-4 w-4" />
+              <span className="sr-only">Réinitialiser</span>
+            </Link>
+          </Button>
         </div>
       </div>
 
       <PokemonInfiniteList 
         initialPokemon={pokemonList}
         initialOffset={limit}
-        searchQuery={query || undefined}
-        typeFilter={typeFilter || undefined}
+        searchQuery={query}
+        typeFilter={typeFilter}
       />
       
       {pokemonList.length === 0 && (

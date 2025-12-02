@@ -67,7 +67,7 @@ export function PokemonInfiniteList({
   const [hasMore, setHasMore] = useState(!searchQuery && !typeFilter && initialPokemon.length === 20);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
-
+console.log('Rendering PokemonInfiniteList with', { searchQuery, typeFilter });
   // Fetch Pokemon basic info for types display
   const fetchPokemonDetails = useCallback(async (pokemon: PokemonListItem[]) => {
     setPokemonDetails(prevDetails => {
@@ -117,7 +117,14 @@ export function PokemonInfiniteList({
   // Load initial Pokemon details
   useEffect(() => {
     fetchPokemonDetails(initialPokemon);
-  }, [initialPokemon, fetchPokemonDetails]);
+  }, [initialPokemon, fetchPokemonDetails, searchQuery, typeFilter]);
+
+  // Update list when initialPokemon changes (e.g. from server-side search/filter)
+  useEffect(() => {
+    setPokemonList(initialPokemon);
+    setOffset(initialOffset);
+    setHasMore(!searchQuery && !typeFilter && initialPokemon.length === 20);
+  }, [initialPokemon, initialOffset, searchQuery, typeFilter]);
 
   // Load more Pokemon
   const loadMore = useCallback(async () => {
