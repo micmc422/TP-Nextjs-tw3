@@ -1,10 +1,26 @@
+/**
+ * Composant Navigation Principale de l'Application
+ * 
+ * Ce composant implémente une navigation responsive avec un menu desktop
+ * et un menu mobile hamburger. Il utilise les composants shadcn/ui.
+ * 
+ * Concepts clés pour les étudiants :
+ * - Navigation responsive (mobile vs desktop)
+ * - Composant client ("use client") pour l'interactivité
+ * - Utilisation de shadcn/ui NavigationMenu
+ * - Pattern React.forwardRef pour les composants réutilisables
+ */
+
 "use client"
 
 import * as React from "react"
 import { useState } from "react"
 import Link from "next/link"
+// Icônes pour le menu hamburger
 import { Menu, X } from "lucide-react"
+// Utilitaire de fusion de classes
 import { cn } from "@workspace/ui/lib/utils"
+// Composants UI du monorepo
 import { Button } from "@workspace/ui/components/button"
 import {
   NavigationMenu,
@@ -16,17 +32,28 @@ import {
   navigationMenuTriggerStyle,
 } from "@workspace/ui/components/navigation-menu"
 
+/**
+ * Composant NavigationMain - Barre de navigation principale
+ * 
+ * Gère deux modes d'affichage :
+ * 1. Mobile : Menu hamburger avec dropdown vertical
+ * 2. Desktop : NavigationMenu horizontal avec sous-menus
+ */
 export function NavigationMain() {
+  // État pour le menu mobile (ouvert/fermé)
   const [isOpen, setIsOpen] = useState(false)
 
   return (
+    // Header sticky qui reste visible lors du scroll
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-3xl w-full px-4 mx-auto py-3">
-        {/* Mobile Navigation */}
+        {/* ===== NAVIGATION MOBILE ===== */}
         <div className="flex items-center justify-between md:hidden">
+          {/* Logo/Titre cliquable */}
           <Link href="/" className="font-semibold text-lg">
             Next.js TP
           </Link>
+          {/* Bouton hamburger avec accessibilité */}
           <Button
             variant="ghost"
             size="icon"
@@ -37,7 +64,7 @@ export function NavigationMain() {
           </Button>
         </div>
 
-        {/* Mobile Menu Dropdown */}
+        {/* Menu déroulant mobile (affiché conditionnellement) */}
         {isOpen && (
           <nav className="md:hidden pt-4 pb-2 space-y-2">
             <Link
@@ -47,6 +74,7 @@ export function NavigationMain() {
             >
               Accueil
             </Link>
+            {/* Sous-menu Pokémon */}
             <div className="px-3 py-2">
               <p className="text-sm font-semibold text-muted-foreground mb-2">Poké</p>
               <div className="pl-3 space-y-1 border-l-2 border-muted">
@@ -104,20 +132,23 @@ export function NavigationMain() {
           </nav>
         )}
 
-        {/* Desktop Navigation */}
+        {/* ===== NAVIGATION DESKTOP ===== */}
         <div className="hidden md:block">
           <NavigationMenu>
             <NavigationMenuList>
+              {/* Lien Accueil */}
               <NavigationMenuItem>
                 <NavigationMenuLink href="/" className={navigationMenuTriggerStyle()}>
                   Accueil
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
+              {/* Menu déroulant Pokémon */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Poké</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    {/* Carte principale Pokédex */}
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <Link
@@ -133,6 +164,7 @@ export function NavigationMain() {
                         </Link>
                       </NavigationMenuLink>
                     </li>
+                    {/* Liens secondaires */}
                     <ListItem href="/pokemon/compare" title="Comparateur">
                       Comparez les statistiques de différents Pokémon.
                     </ListItem>
@@ -152,6 +184,7 @@ export function NavigationMain() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
+              {/* Lien Packages */}
               <NavigationMenuItem>
                 <NavigationMenuLink href="/packages" className={navigationMenuTriggerStyle()}>
                   Packages
@@ -165,6 +198,16 @@ export function NavigationMain() {
   )
 }
 
+/**
+ * Composant ListItem - Élément de liste pour le menu de navigation
+ * 
+ * Utilise React.forwardRef pour permettre l'accès à la ref du DOM.
+ * C'est une bonne pratique pour les composants réutilisables.
+ * 
+ * @param title - Titre du lien
+ * @param children - Description du lien
+ * @param className - Classes CSS additionnelles
+ */
 const ListItem = React.forwardRef<
   React.ElementRef<typeof Link>,
   React.ComponentPropsWithoutRef<typeof Link> & { title: string }

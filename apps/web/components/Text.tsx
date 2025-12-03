@@ -1,49 +1,90 @@
-// components/Text.tsx
+/**
+ * Composant Text - Paragraphes et Citations Stylisés
+ * 
+ * Ce composant gère les styles de texte pour les paragraphes et les
+ * citations (blockquote), avec différentes tailles prédéfinies.
+ * 
+ * Concepts clés pour les étudiants :
+ * - Composant polymorphique (rend <p> ou <blockquote>)
+ * - Pattern de variantes avec un objet de mapping
+ * - Props optionnelles avec valeurs par défaut
+ * - Styles responsifs avec Tailwind CSS
+ */
+
 import React from 'react';
-import { cn } from '@workspace/ui/lib/utils'; // Assurez-vous d'avoir la fonction cn
+// Utilitaire de fusion de classes CSS
+import { cn } from '@workspace/ui/lib/utils';
 
 /**
- * Définit les variations de taille et leurs classes Tailwind associées.
- * Les classes incluent la taille de la police (text-*) et la hauteur de ligne (leading-*).
+ * Mapping des tailles de texte vers les classes Tailwind
+ * 
+ * Chaque taille inclut :
+ * - text-* : taille de la police
+ * - leading-* : hauteur de ligne (interligne)
  */
 const textSizeMap = {
-    xs: 'text-xs leading-none', // Extra-small (e.g., copyright/metadata)
-    sm: 'text-sm leading-snug', // Small (e.g., descriptions fines, petites notes)
-    base: 'text-base leading-relaxed', // Standard/paragraphe par défaut
-    lg: 'text-lg leading-relaxed', // Large (e.g., pour un corps de texte plus lisible)
-    xl: 'text-xl leading-relaxed', // Extra-large (e.g., intro accrocheuse)
-    lead: 'text-xl text-muted-foreground leading-7 [&:not(:first-child)]:mt-6', // Variation 'lead' de shadcn/ui
+    xs: 'text-xs leading-none',       // Extra-small (copyright, métadonnées)
+    sm: 'text-sm leading-snug',       // Small (descriptions, notes)
+    base: 'text-base leading-relaxed', // Taille par défaut (paragraphes)
+    lg: 'text-lg leading-relaxed',     // Large (texte mis en avant)
+    xl: 'text-xl leading-relaxed',     // Extra-large (introductions)
+    lead: 'text-xl text-muted-foreground leading-7 [&:not(:first-child)]:mt-6', // Style "lead" shadcn/ui
 } as const;
 
+/**
+ * Type des tailles disponibles (inféré depuis textSizeMap)
+ */
 type TextSize = keyof typeof textSizeMap;
 
+/**
+ * Props du composant Text
+ */
 interface TextProps extends React.HTMLAttributes<HTMLElement> {
     /**
-     * Le contenu du paragraphe.
+     * Contenu du paragraphe ou de la citation
      */
     children: React.ReactNode;
     /**
-     * Style spécial pour la citation en bloc.
-     * Si 'true', le texte est rendu dans une balise <blockquote>.
+     * Si true, le texte est rendu dans une balise <blockquote>
+     * avec un style de citation (bordure gauche, italique)
      */
     blockquote?: boolean;
     /**
-     * La taille du texte. 'base' est la taille par défaut.
+     * Taille du texte. Par défaut : 'base'
      */
     size?: TextSize;
 }
 
 /**
- * Composant pour gérer les styles de paragraphe, blockquote, et différentes tailles de texte.
+ * Composant Text - Texte avec styles prédéfinis
+ * 
+ * @example
+ * // Paragraphe standard
+ * <Text>Contenu du paragraphe.</Text>
+ * 
+ * @example
+ * // Texte large pour une introduction
+ * <Text size="lg">Bienvenue dans notre application.</Text>
+ * 
+ * @example
+ * // Citation en bloc
+ * <Text blockquote>
+ *   "Attrapez-les tous !" - Pokémon
+ * </Text>
+ * 
+ * @param children - Contenu textuel
+ * @param className - Classes CSS additionnelles
+ * @param blockquote - Si true, rend une <blockquote>
+ * @param size - Taille du texte (xs, sm, base, lg, xl, lead)
  */
 export function Text({ children, className, blockquote = false, size = 'base', ...props }: TextProps) {
 
-    // 1. Styles spécifiques pour le blockquote
+    // Mode citation : rendu en <blockquote> avec style spécifique
     if (blockquote) {
         return (
             <blockquote
-                // Applique des styles blockquote de shadcn/ui
                 className={cn(
+                    // Styles blockquote inspirés de shadcn/ui
                     "mt-6 border-l-2 pl-6 italic text-gray-700 dark:text-gray-300",
                     className
                 )}
@@ -54,12 +95,12 @@ export function Text({ children, className, blockquote = false, size = 'base', .
         );
     }
 
-    // 2. Rendu pour un paragraphe standard
-
-    // Récupère les styles de taille en fonction de la prop 'size'
+    // Mode paragraphe standard
+    // Récupère les styles de taille correspondants
     const sizeStyle = textSizeMap[size];
 
-    // Style par défaut pour le paragraphe (s'assure d'une marge cohérente)
+    // Style de base pour les paragraphes (marge entre les paragraphes consécutifs)
+    // [&:not(:first-child)]:mt-6 ajoute une marge-top sauf pour le premier enfant
     const paragraphBaseStyle = '[&:not(:first-child)]:mt-6';
 
     return (

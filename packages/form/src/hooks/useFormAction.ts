@@ -1,59 +1,86 @@
+/**
+ * Hook useFormAction - Gestion des Server Actions avec React 19
+ * 
+ * Ce hook encapsule la logique de soumission de formulaires vers des Server Actions
+ * en utilisant les nouveaux hooks React 19 : useTransition et useOptimistic.
+ * 
+ * Concepts clés pour les étudiants :
+ * - useTransition : permet de marquer des mises à jour comme non-urgentes
+ * - useOptimistic : permet d'afficher un état optimiste avant la réponse serveur
+ * - Server Actions : fonctions exécutées côté serveur appelables depuis le client
+ * - FormData : format standard pour l'envoi de données de formulaire
+ * 
+ * Avantages :
+ * - UX améliorée avec feedback immédiat (optimistic updates)
+ * - Pas de blocage de l'interface pendant la soumission
+ * - Gestion d'erreurs centralisée
+ */
+
 "use client"
 
 import * as React from "react"
 
 /**
- * State returned by the server action
+ * État retourné par la Server Action
+ * 
+ * @template T - Type des données retournées en cas de succès
  */
 export interface FormActionState<T = unknown> {
-  success: boolean
-  message?: string
-  data?: T
-  errors?: Record<string, string[]>
+  success: boolean               // Indique si l'action a réussi
+  message?: string              // Message à afficher à l'utilisateur
+  data?: T                      // Données retournées (ex: URL du PDF généré)
+  errors?: Record<string, string[]>  // Erreurs de validation par champ
 }
 
 /**
- * Options for useFormAction hook
+ * Options de configuration du hook useFormAction
+ * 
+ * @template TInput - Type des données d'entrée du formulaire
+ * @template TOutput - Type des données retournées par l'action
  */
 export interface UseFormActionOptions<TInput, TOutput> {
-  /** Server action function */
+  /** La fonction Server Action à appeler */
   action: (prevState: FormActionState<TOutput>, formData: FormData) => Promise<FormActionState<TOutput>>
-  /** Initial state */
+  /** État initial (avant toute soumission) */
   initialState?: FormActionState<TOutput>
-  /** Callback on success */
+  /** Callback appelé en cas de succès */
   onSuccess?: (data: TOutput | undefined, state: FormActionState<TOutput>) => void
-  /** Callback on error */
+  /** Callback appelé en cas d'erreur */
   onError?: (state: FormActionState<TOutput>) => void
-  /** Transform form values to FormData before sending */
+  /** Transformer les valeurs typées en FormData avant envoi */
   transformData?: (values: TInput) => FormData
-  /** Custom message shown during pending state */
+  /** Message affiché pendant la soumission */
   pendingMessage?: string
-  /** Custom message shown when an error occurs */
+  /** Message affiché en cas d'erreur inattendue */
   errorMessage?: string
 }
 
 /**
- * Return type for useFormAction hook
+ * Type de retour du hook useFormAction
+ * 
+ * @template TInput - Type des données d'entrée
+ * @template TOutput - Type des données de sortie
  */
 export interface UseFormActionReturn<TInput, TOutput> {
-  /** Current state from server action */
+  /** État actuel retourné par la Server Action */
   state: FormActionState<TOutput>
-  /** Optimistic state for immediate UI feedback */
+  /** État optimiste pour un feedback UI immédiat */
   optimisticState: FormActionState<TOutput>
-  /** Whether the action is currently pending */
+  /** Indique si une action est en cours */
   isPending: boolean
-  /** Submit the form action */
+  /** Soumettre avec un FormData brut */
   submit: (formData: FormData) => void
-  /** Submit with typed values */
+  /** Soumettre avec des valeurs typées */
   submitWithValues: (values: TInput) => void
-  /** Form action for native form usage */
+  /** Action à passer à l'attribut action d'un <form> */
   formAction: (formData: FormData) => void
-  /** Set optimistic state for immediate feedback */
+  /** Définir un état optimiste manuellement */
   setOptimistic: (state: Partial<FormActionState<TOutput>>) => void
-  /** Reset state to initial */
+  /** Réinitialiser l'état */
   reset: () => void
 }
 
+/** État initial par défaut */
 const defaultInitialState: FormActionState = {
   success: false,
   message: undefined,
@@ -62,21 +89,27 @@ const defaultInitialState: FormActionState = {
 }
 
 /**
- * Custom hook for handling server actions with useTransition and useOptimistic
+ * Hook useFormAction - Gère les Server Actions avec états de chargement et optimisme
+ * 
+ * Ce hook simplifie l'utilisation des Server Actions en gérant automatiquement :
+ * - L'état de chargement (isPending)
+ * - Les mises à jour optimistes (feedback immédiat)
+ * - Les callbacks de succès/erreur
+ * - La conversion des données en FormData
  * 
  * @example
  * ```tsx
  * const { state, isPending, formAction } = useFormAction({
  *   action: createPokemonAction,
- *   onSuccess: (data) => console.log('Success!', data),
- *   onError: (state) => console.error('Error:', state.message),
+ *   onSuccess: (data) => console.log('Succès !', data),
+ *   onError: (state) => console.error('Erreur :', state.message),
  * })
  * 
  * return (
  *   <form action={formAction}>
  *     <input name="name" />
  *     <button type="submit" disabled={isPending}>
- *       {isPending ? 'Creating...' : 'Create'}
+ *       {isPending ? 'Création...' : 'Créer'}
  *     </button>
  *   </form>
  * )
@@ -91,10 +124,17 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
   pendingMessage = "Submitting...",
   errorMessage = "An error occurred",
 }: UseFormActionOptions<TInput, TOutput>): UseFormActionReturn<TInput, TOutput> {
+  // État réel retourné par la Server Action
   const [state, setState] = React.useState<FormActionState<TOutput>>(initialState)
+  
+  // useTransition permet de marquer les mises à jour comme non-urgentes
+  // isPending sera true pendant l'exécution de la transition
   const [isPending, startTransition] = React.useTransition()
   
-  // Optimistic state for immediate UI updates
+  /**
+   * useOptimistic permet d'afficher un état temporaire pendant l'attente
+   * du serveur, puis il est automatiquement remplacé par l'état réel
+   */
   const [optimisticState, setOptimisticState] = React.useOptimistic<
     FormActionState<TOutput>,
     Partial<FormActionState<TOutput>>
@@ -106,22 +146,29 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     })
   )
 
+  /**
+   * Soumet le formulaire avec un FormData
+   * Utilise startTransition pour ne pas bloquer l'UI
+   */
   const submit = React.useCallback(
     (formData: FormData) => {
       startTransition(async () => {
-        // Set optimistic pending state
+        // Afficher immédiatement un état de chargement optimiste
         setOptimisticState({ success: false, message: pendingMessage })
 
         try {
+          // Appel de la Server Action
           const result = await action(state, formData)
           setState(result)
 
+          // Appel des callbacks appropriés
           if (result.success) {
             onSuccess?.(result.data, result)
           } else {
             onError?.(result)
           }
         } catch (error) {
+          // Gestion des erreurs inattendues
           const errorState: FormActionState<TOutput> = {
             success: false,
             message: error instanceof Error ? error.message : errorMessage,
@@ -134,13 +181,19 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     [action, state, onSuccess, onError, setOptimisticState, pendingMessage, errorMessage]
   )
 
+  /**
+   * Soumet le formulaire avec des valeurs typées
+   * Convertit automatiquement les valeurs en FormData
+   */
   const submitWithValues = React.useCallback(
     (values: TInput) => {
       let formData: FormData
       
+      // Utiliser le transformateur personnalisé si fourni
       if (transformData) {
         formData = transformData(values)
       } else {
+        // Conversion par défaut des valeurs en FormData
         formData = new FormData()
         Object.entries(values as Record<string, unknown>).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
@@ -160,6 +213,10 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     [submit, transformData]
   )
 
+  /**
+   * Action à passer à l'attribut action d'un <form>
+   * Wrapper autour de submit pour la compatibilité avec les formulaires natifs
+   */
   const formAction = React.useCallback(
     (formData: FormData) => {
       submit(formData)
@@ -167,6 +224,10 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     [submit]
   )
 
+  /**
+   * Définit un état optimiste manuellement
+   * Utile pour des feedbacks personnalisés
+   */
   const setOptimistic = React.useCallback(
     (newState: Partial<FormActionState<TOutput>>) => {
       setOptimisticState(newState)
@@ -174,6 +235,9 @@ export function useFormAction<TInput = Record<string, unknown>, TOutput = unknow
     [setOptimisticState]
   )
 
+  /**
+   * Réinitialise l'état à sa valeur initiale
+   */
   const reset = React.useCallback(() => {
     setState(initialState)
   }, [initialState])
