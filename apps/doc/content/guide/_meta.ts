@@ -1,4 +1,5 @@
 export default {
+  presentation: "Présentation",
   'getting-started': 'Démarrage',
   architecture: 'Architecture',
   turborepo: 'Turborepo',
