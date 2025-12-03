@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { generateStaticParamsFor, importPage } from 'nextra/pages'
 import { useMDXComponents as getMDXComponents } from '../../../mdx-components'
 
@@ -10,6 +10,8 @@ export async function generateMetadata(props) {
   return metadata
 }
 
+// Note: getMDXComponents() is called at module scope, not in a React component.
+// This is the pattern recommended by Nextra for catch-all routes.
 const Wrapper = getMDXComponents().wrapper
 
 export default async function Page(props) {

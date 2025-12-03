@@ -4,8 +4,10 @@ import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import type { ReactNode } from 'react'
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://micmc422.github.io/TP-Nextjs-tw3'
+
 export const metadata = {
-  metadataBase: new URL('https://micmc422.github.io/TP-Nextjs-tw3'),
+  metadataBase: new URL(siteUrl),
   title: {
     template: '%s - Documentation TP Next.js',
     default: 'Documentation TP Next.js'
