@@ -1,3 +1,21 @@
+/**
+ * Composant MoveInfiniteList - Liste Infinie de Capacités Pokémon
+ * 
+ * Ce composant affiche un tableau de capacités (moves) avec défilement infini
+ * et des filtres par type et catégorie de dégâts.
+ * 
+ * Concepts clés pour les étudiants :
+ * - Intersection Observer API : détection du scroll
+ * - Filtrage côté client : useMemo pour optimiser les calculs
+ * - État multiple : liste, détails, filtres, chargement
+ * - Cache des données : évite les requêtes redondantes
+ * 
+ * Catégories de dégâts (damage_class) :
+ * - physical : attaques physiques (utilise l'Attaque)
+ * - special : attaques spéciales (utilise l'Atq. Spé)
+ * - status : attaques de statut (pas de dégâts directs)
+ */
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
@@ -14,59 +32,91 @@ import { Select } from "@workspace/ui/components/select";
 import { useRouter } from "next/navigation";
 import { typeColors, pokemonTypes, damageClassColors, damageClasses, formatName } from "@/lib/pokemon-constants";
 
+/**
+ * Type pour un élément de la liste (format API PokeAPI)
+ */
 type MoveListItem = {
   name: string;
   url: string;
 };
 
+/**
+ * Type pour les informations détaillées d'une capacité
+ * Chargées en parallèle après l'affichage initial
+ */
 type MoveBasicInfo = {
   id: number;
   name: string;
-  type: { name: string } | null;
-  damage_class: { name: string } | null;
-  power: number | null;
-  accuracy: number | null;
-  pp: number | null;
+  type: { name: string } | null;           // Type de la capacité (fire, water, etc.)
+  damage_class: { name: string } | null;   // Catégorie (physical, special, status)
+  power: number | null;                     // Puissance (null pour les capacités de statut)
+  accuracy: number | null;                  // Précision en pourcentage
+  pp: number | null;                        // Points de pouvoir (utilisations)
 };
 
-// Helper to get ID from URL
+/**
+ * Extrait l'ID d'une capacité depuis son URL
+ * @example getIdFromUrl("https://pokeapi.co/api/v2/move/1/") → "1"
+ */
 function getIdFromUrl(url: string): string {
   return url.split('/').filter(Boolean).pop() || '';
 }
 
+/**
+ * Props du composant MoveInfiniteList
+ */
 interface MoveInfiniteListProps {
   initialMoves: MoveListItem[];
   initialOffset: number;
 }
 
+/**
+ * Composant MoveInfiniteList - Tableau de capacités avec défilement infini
+ * 
+ * Fonctionnalités :
+ * 1. Affichage paginé avec défilement infini
+ * 2. Filtrage par type de capacité
+ * 3. Filtrage par catégorie de dégâts
+ * 4. Chargement des détails en arrière-plan
+ * 5. Navigation vers la page détail au clic
+ * 
+ * @param initialMoves - Capacités chargées côté serveur
+ * @param initialOffset - Offset de départ pour la pagination
+ */
 export function MoveInfiniteList({ 
   initialMoves, 
   initialOffset 
 }: MoveInfiniteListProps) {
+  // ===== ÉTATS DE LA LISTE =====
   const [moveList, setMoveList] = useState<MoveListItem[]>(initialMoves);
   const [moveDetails, setMoveDetails] = useState<Map<string, MoveBasicInfo>>(new Map());
   const [offset, setOffset] = useState(initialOffset);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialMoves.length === 20);
+  
+  // ===== REFS =====
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   
-  // Filter states
+  // ===== ÉTATS DES FILTRES =====
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [damageClassFilter, setDamageClassFilter] = useState<string>('');
 
-  // Fetch Move basic info
+  /**
+   * Charge les détails des capacités en arrière-plan
+   * Utilise un cache (Map) pour éviter les requêtes redondantes
+   */
   const fetchMoveDetails = useCallback(async (moves: MoveListItem[]) => {
     setMoveDetails(prevDetails => {
       const newDetails = new Map(prevDetails);
       
-      // Only fetch details for moves we don't have yet
+      // Filtre les capacités dont on a déjà les détails
       const toFetch = moves.filter(m => !newDetails.has(m.name));
       
       if (toFetch.length === 0) return prevDetails;
       
-      // Fetch in background and update state when done
+      // Récupération en parallèle
       Promise.all(
         toFetch.map(async (m) => {
           try {
@@ -87,7 +137,7 @@ export function MoveInfiniteList({
               };
             }
           } catch {
-            // Ignore errors for individual moves
+            // Ignore les erreurs individuelles
           }
           return null;
         })
@@ -105,12 +155,14 @@ export function MoveInfiniteList({
     });
   }, []);
 
-  // Load initial move details
+  // Charge les détails des capacités initiales
   useEffect(() => {
     fetchMoveDetails(initialMoves);
   }, [initialMoves, fetchMoveDetails]);
 
-  // Load more moves
+  /**
+   * Charge plus de capacités pour le défilement infini
+   */
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
     
@@ -134,7 +186,9 @@ export function MoveInfiniteList({
     }
   }, [loading, hasMore, offset, fetchMoveDetails]);
 
-  // Setup intersection observer for infinite scroll
+  /**
+   * Configure l'IntersectionObserver pour le défilement infini
+   */
   useEffect(() => {
     if (observerRef.current) {
       observerRef.current.disconnect();
@@ -160,20 +214,26 @@ export function MoveInfiniteList({
     };
   }, [hasMore, loading, loadMore]);
 
-  // Filter moves based on selected filters
+  /**
+   * Filtre les capacités selon les critères sélectionnés
+   * 
+   * useMemo évite de recalculer la liste à chaque render
+   * si les dépendances n'ont pas changé
+   */
   const filteredMoves = useMemo(() => {
     return moveList.filter((m) => {
       const details = moveDetails.get(m.name);
       
-      // If details not loaded yet, show the move (will be filtered when details load)
+      // Si les détails ne sont pas encore chargés, afficher la capacité
+      // (elle sera filtrée correctement une fois les détails disponibles)
       if (!details) return true;
       
-      // Filter by type
+      // Filtrage par type
       if (typeFilter && details.type?.name !== typeFilter) {
         return false;
       }
       
-      // Filter by damage class
+      // Filtrage par catégorie de dégâts
       if (damageClassFilter && details.damage_class?.name !== damageClassFilter) {
         return false;
       }
@@ -184,8 +244,9 @@ export function MoveInfiniteList({
 
   return (
     <div className="space-y-4">
-      {/* Filters */}
+      {/* Section des filtres */}
       <div className="flex flex-wrap gap-4 p-4 bg-muted/30 rounded-lg">
+        {/* Filtre par type */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-muted-foreground">Type</label>
           <Select 
@@ -201,6 +262,7 @@ export function MoveInfiniteList({
             ))}
           </Select>
         </div>
+        {/* Filtre par catégorie de dégâts */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-muted-foreground">Catégorie</label>
           <Select 
@@ -216,6 +278,7 @@ export function MoveInfiniteList({
             ))}
           </Select>
         </div>
+        {/* Bouton de réinitialisation des filtres */}
         {(typeFilter || damageClassFilter) && (
           <div className="flex items-end">
             <button
@@ -231,13 +294,14 @@ export function MoveInfiniteList({
         )}
       </div>
 
-      {/* Results count */}
+      {/* Compteur de résultats filtrés */}
       {(typeFilter || damageClassFilter) && (
         <div className="text-sm text-muted-foreground">
           {filteredMoves.length} capacité(s) trouvée(s)
         </div>
       )}
 
+      {/* Tableau des capacités */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -268,6 +332,7 @@ export function MoveInfiniteList({
                   <TableCell className="font-medium capitalize">
                     {m.name.replace(/-/g, ' ')}
                   </TableCell>
+                  {/* Badge du type de la capacité */}
                   <TableCell>
                     {details?.type && (
                       <Badge 
@@ -277,6 +342,7 @@ export function MoveInfiniteList({
                       </Badge>
                     )}
                   </TableCell>
+                  {/* Badge de la catégorie de dégâts */}
                   <TableCell>
                     {details?.damage_class && (
                       <Badge 
@@ -287,12 +353,15 @@ export function MoveInfiniteList({
                       </Badge>
                     )}
                   </TableCell>
+                  {/* Puissance (- si capacité de statut) */}
                   <TableCell className="text-right">
                     {details?.power ?? '-'}
                   </TableCell>
+                  {/* Précision en pourcentage */}
                   <TableCell className="text-right">
                     {details?.accuracy ? `${details.accuracy}%` : '-'}
                   </TableCell>
+                  {/* Points de pouvoir */}
                   <TableCell className="text-right">
                     {details?.pp ?? '-'}
                   </TableCell>
@@ -303,7 +372,7 @@ export function MoveInfiniteList({
         </Table>
       </div>
 
-      {/* Infinite scroll trigger */}
+      {/* Zone de déclenchement du défilement infini */}
       <div ref={loadMoreRef} className="py-4 flex justify-center">
         {loading && (
           <div className="flex items-center gap-2 text-muted-foreground text-sm">

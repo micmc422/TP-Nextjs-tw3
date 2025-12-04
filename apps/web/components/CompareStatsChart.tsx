@@ -1,21 +1,57 @@
+/**
+ * Composant CompareStatsChart - Graphique Radar de Comparaison
+ * 
+ * Ce composant affiche un graphique radar superposant les statistiques
+ * de plusieurs Pokémon pour faciliter leur comparaison visuelle.
+ * 
+ * Concepts clés pour les étudiants :
+ * - Recharts : bibliothèque de graphiques React
+ * - RadarChart : graphique en toile d'araignée pour comparer des valeurs
+ * - Données superposées : plusieurs séries sur le même graphique
+ * - Légende dynamique : générée à partir des données
+ * 
+ * Différence avec PokemonStats :
+ * - PokemonStats : un seul Pokémon, style simplifié
+ * - CompareStatsChart : jusqu'à 4 Pokémon, couleurs distinctes
+ */
+
 "use client"
 
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, Legend, Tooltip, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { ComparePokemon } from "./PokemonCompareContext"
 
+/**
+ * Props du composant CompareStatsChart
+ * @property pokemon - Tableau des Pokémon à comparer (2 à 4)
+ */
 interface CompareStatsChartProps {
   pokemon: ComparePokemon[]
 }
 
-// Colors for each Pokemon in comparison
+/**
+ * Couleurs attribuées à chaque Pokémon dans la comparaison
+ * 
+ * Chaque couleur a :
+ * - fill : couleur de remplissage de la zone (avec transparence)
+ * - stroke : couleur du contour de la ligne
+ * 
+ * Les couleurs sont choisies pour être distinctes visuellement :
+ * Bleu, Rouge, Vert, Violet
+ */
 const POKEMON_COLORS = [
-  { fill: "hsl(220, 70%, 50%)", stroke: "hsl(220, 70%, 40%)" },   // Blue
-  { fill: "hsl(0, 70%, 50%)", stroke: "hsl(0, 70%, 40%)" },       // Red
-  { fill: "hsl(120, 70%, 40%)", stroke: "hsl(120, 70%, 30%)" },   // Green
-  { fill: "hsl(280, 70%, 50%)", stroke: "hsl(280, 70%, 40%)" },   // Purple
+  { fill: "hsl(220, 70%, 50%)", stroke: "hsl(220, 70%, 40%)" },   // Bleu
+  { fill: "hsl(0, 70%, 50%)", stroke: "hsl(0, 70%, 40%)" },       // Rouge
+  { fill: "hsl(120, 70%, 40%)", stroke: "hsl(120, 70%, 30%)" },   // Vert
+  { fill: "hsl(280, 70%, 50%)", stroke: "hsl(280, 70%, 40%)" },   // Violet
 ]
 
+/**
+ * Traduction des noms de statistiques de l'anglais vers le français
+ * 
+ * Les noms viennent de l'API PokeAPI en anglais :
+ * hp, attack, defense, special-attack, special-defense, speed
+ */
 const statTranslation: Record<string, string> = {
   hp: "PV",
   attack: "Attaque",
@@ -25,16 +61,37 @@ const statTranslation: Record<string, string> = {
   speed: "Vitesse",
 }
 
+/**
+ * Composant CompareStatsChart - Graphique de comparaison de statistiques
+ * 
+ * Ce composant :
+ * 1. Récupère les noms de stats du premier Pokémon
+ * 2. Construit un dataset avec les valeurs de chaque Pokémon
+ * 3. Affiche un RadarChart avec des Radar superposés
+ * 4. Ajoute un Tooltip personnalisé et une légende
+ * 
+ * @param pokemon - Tableau de Pokémon à comparer
+ */
 export function CompareStatsChart({ pokemon }: CompareStatsChartProps) {
-  // Get all stat names from the first Pokemon
+  // Récupère les noms des 6 statistiques depuis le premier Pokémon
   const statNames = pokemon[0]?.stats.map((s) => s.stat.name) || []
 
-  // Create chart data with stats for each Pokemon
+  /**
+   * Construction des données pour le graphique
+   * 
+   * Format requis par Recharts :
+   * [
+   *   { stat: "PV", pokemon0: 45, pokemon1: 60, ... },
+   *   { stat: "Attaque", pokemon0: 80, pokemon1: 75, ... },
+   *   ...
+   * ]
+   */
   const chartData = statNames.map((statName) => {
     const dataPoint: Record<string, string | number> = {
       stat: statTranslation[statName] || statName,
     }
     
+    // Ajoute la valeur de chaque Pokémon pour cette statistique
     pokemon.forEach((p, index) => {
       const stat = p.stats.find((s) => s.stat.name === statName)
       dataPoint[`pokemon${index}`] = stat?.base_stat || 0
@@ -49,11 +106,15 @@ export function CompareStatsChart({ pokemon }: CompareStatsChartProps) {
         <CardTitle className="text-lg">Comparaison des statistiques</CardTitle>
       </CardHeader>
       <CardContent className="pb-2">
+        {/* ResponsiveContainer adapte la taille du graphique au conteneur */}
         <div className="w-full h-[350px] sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+              {/* Grille de fond hexagonale */}
               <PolarGrid />
+              {/* Labels des axes (noms des statistiques) */}
               <PolarAngleAxis dataKey="stat" tick={{ fontSize: 11 }} />
+              {/* Tooltip personnalisé au survol */}
               <Tooltip
                 content={({ active, payload }) => {
                   if (!active || !payload || !payload.length) return null
@@ -74,6 +135,7 @@ export function CompareStatsChart({ pokemon }: CompareStatsChartProps) {
                   )
                 }}
               />
+              {/* Légende personnalisée avec les noms des Pokémon */}
               <Legend
                 content={({ payload }) => (
                   <div className="flex flex-wrap justify-center gap-4 mt-4">
@@ -89,6 +151,7 @@ export function CompareStatsChart({ pokemon }: CompareStatsChartProps) {
                   </div>
                 )}
               />
+              {/* Génère un Radar pour chaque Pokémon */}
               {pokemon
                 .filter((_, index) => index < POKEMON_COLORS.length)
                 .map((p, index) => (
