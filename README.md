@@ -1,30 +1,30 @@
-# shadcn/ui monorepo template
+# Modèle monorepo shadcn/ui
 
-This template is for creating a monorepo with shadcn/ui.
+Ce modèle est conçu pour créer un monorepo avec shadcn/ui.
 
-## Usage
+## Utilisation
 
 ```bash
 pnpm dlx shadcn@latest init
 ```
 
-## Adding components
+## Ajouter des composants
 
-To add components to your app, run the following command at the root of your `web` app:
+Pour ajouter des composants à votre application, exécutez la commande suivante à la racine de votre application `web` :
 
 ```bash
 pnpm dlx shadcn@latest add button -c apps/web
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+Cela placera les composants UI dans le répertoire `packages/ui/src/components`.
 
 ## Tailwind
 
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
+Votre `tailwind.config.ts` et `globals.css` sont déjà configurés pour utiliser les composants du package `ui`.
 
-## Using components
+## Utilisation des composants
 
-To use the components in your app, import them from the `ui` package.
+Pour utiliser les composants dans votre application, importez-les depuis le package `ui`.
 
 ```tsx
 import { Button } from "@workspace/ui/components/button"
