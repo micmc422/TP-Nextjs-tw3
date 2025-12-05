@@ -4,35 +4,51 @@
     {
       "name": "Install Dependencies",
       "command": "pnpm install"
+    },
+    {
+      "name": "Pull Docker Images",
+      "command": "docker compose pull"
     }
   ],
   "tasks": {
     "dev": {
-      "name": "Development (Web + Doc)",
+      "name": "Dev (All Apps)",
       "command": "pnpm dev:app",
+      "runAtStart": true,
+      "preview": {
+        "port": 3000
+      }
+    },
+    "db": {
+      "name": "Start Database",
+      "command": "docker compose up",
       "runAtStart": true
     },
     "dev:web": {
-      "name": "Dev Web App",
+      "name": "Dev (Web Only)",
       "command": "pnpm --filter web dev",
       "preview": {
         "port": 3000
       }
     },
     "dev:doc": {
-      "name": "Dev Documentation",
+      "name": "Dev (Doc Only)",
       "command": "pnpm --filter doc dev",
       "preview": {
         "port": 3001
       }
     },
     "build": {
-      "name": "Build All",
+      "name": "Build",
       "command": "pnpm build"
     },
     "lint": {
-      "name": "Lint All",
+      "name": "Lint",
       "command": "pnpm lint"
+    },
+    "format": {
+      "name": "Format",
+      "command": "pnpm format"
     }
   }
 }
