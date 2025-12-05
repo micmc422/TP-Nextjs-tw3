@@ -2,6 +2,12 @@
 
 Documentation complète du projet TP Next.js construite avec [Nextra](https://nextra.site).
 
+## 🌐 Ouvrir dans CodeSandbox
+
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/micmc422/TP-Nextjs-tw3)
+
+> 💡 Solution de secours si un poste universitaire est indisponible.
+
 ## 🚀 Développement
 
 ```bash
@@ -19,21 +25,25 @@ pnpm build
 ## 🎨 Structure
 
 ```plaintext
-pages/
-├── _app.tsx          # Application Next.js requise par Nextra
-├── _meta.ts          # Navigation principale
-├── index.mdx         # Page d'accueil
-├── guide/            # Guides d'utilisation
+content/
+├── _meta.ts              # Navigation principale
+├── index.mdx             # Page d'accueil
+├── guide/                # Guides d'utilisation
 │   ├── _meta.ts
+│   ├── presentation.mdx
 │   ├── getting-started.mdx
+│   ├── codesandbox.mdx   # Guide CodeSandbox (secours)
 │   ├── architecture.mdx
 │   ├── turborepo.mdx
-│   └── nextjs.mdx
-└── packages/         # Documentation des packages
+│   ├── nextjs.mdx
+│   └── authentification.mdx
+└── packages/             # Documentation des packages
     ├── _meta.ts
+    ├── presentation.mdx
     ├── ui.mdx
     ├── form.mdx
-    └── pokeapi.mdx
+    ├── pokeapi.mdx
+    └── database.mdx
 ```
 
 ## ✨ Fonctionnalités
@@ -55,7 +65,7 @@ pages/
 Exemple :
 
 ```typescript
-// pages/guide/_meta.ts
+// content/guide/_meta.ts
 export default {
   'getting-started': 'Démarrage',
   'new-page': 'Ma nouvelle page', // <- Ajouter ici

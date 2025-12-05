@@ -1,0 +1,149 @@
+# Utilisation avec CodeSandbox
+
+Ce guide explique comment utiliser ce projet dans **CodeSandbox**, une solution de secours si les postes de l'Université sont indisponibles ou dysfonctionnels.
+
+## 🌐 Pourquoi CodeSandbox ?
+
+CodeSandbox est un environnement de développement en ligne qui permet de :
+
+- **Travailler sans installation locale** - Pas besoin de Node.js, pnpm, ou autre outil
+- **Accéder depuis n'importe où** - Un navigateur web suffit
+- **Continuer le travail** - Si un poste universitaire est en panne
+- **Collaborer facilement** - Partagez votre environnement avec un lien
+
+## 🚀 Démarrage rapide
+
+### Méthode 1 : Ouvrir directement depuis GitHub
+
+1. Ouvrez le repository GitHub du projet
+2. Cliquez sur le bouton **Code** vert
+3. Sélectionnez **Open with CodeSandbox** (ou utilisez l'extension navigateur)
+4. Attendez que l'environnement se configure automatiquement
+
+### Méthode 2 : URL directe
+
+Ouvrez directement ce lien dans votre navigateur :
+
+```
+https://codesandbox.io/p/github/micmc422/TP-Nextjs-tw3
+```
+
+### Méthode 3 : Importer manuellement
+
+1. Allez sur [codesandbox.io](https://codesandbox.io)
+2. Cliquez sur **Create** puis **Import from GitHub**
+3. Collez l'URL du repository : `https://github.com/micmc422/TP-Nextjs-tw3`
+4. Cliquez sur **Import**
+
+## ⚙️ Configuration automatique
+
+Le projet est configuré pour fonctionner automatiquement dans CodeSandbox grâce au fichier `.codesandbox/tasks.json`.
+
+### Tâches disponibles
+
+| Tâche | Description | Port |
+|-------|-------------|------|
+| **Development** | Lance web + doc | 3000, 3001 |
+| **Dev Web App** | Lance l'app web uniquement | 3000 |
+| **Dev Documentation** | Lance la doc uniquement | 3001 |
+| **Build All** | Build tous les projets | - |
+| **Lint All** | Lint tous les projets | - |
+
+### Au démarrage
+
+CodeSandbox exécute automatiquement :
+
+1. `pnpm install` - Installation des dépendances
+2. `pnpm dev:app` - Lancement du développement
+
+## 📱 Interface CodeSandbox
+
+### Éditeur
+
+L'éditeur fonctionne comme VS Code avec :
+- Coloration syntaxique
+- IntelliSense / autocomplétion
+- Terminal intégré
+- Gestionnaire de fichiers
+
+### Prévisualisation
+
+Un panneau de prévisualisation affiche automatiquement l'application web sur le port 3000.
+
+Pour voir la documentation :
+1. Ouvrez un nouveau terminal
+2. Tapez le port `3001` dans la barre d'adresse du panneau de prévisualisation
+
+### Terminal
+
+Utilisez le terminal intégré pour exécuter des commandes :
+
+```bash
+# Lancer uniquement l'app web
+pnpm --filter web dev
+
+# Lancer uniquement la documentation
+pnpm --filter doc dev
+
+# Builder un projet
+pnpm build
+
+# Ajouter un composant shadcn/ui
+pnpm dlx shadcn@latest add [composant] -c apps/web
+```
+
+## ⚠️ Limitations
+
+### Base de données
+
+Le projet utilise MongoDB localement (via Docker). Dans CodeSandbox :
+
+- **Option 1** : Utilisez [MongoDB Atlas](https://www.mongodb.com/atlas) (gratuit)
+- **Option 2** : Ignorez les fonctionnalités liées à la base de données
+
+Pour configurer MongoDB Atlas :
+
+1. Créez un compte gratuit sur [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Créez un cluster gratuit (M0)
+3. Obtenez la chaîne de connexion
+4. Créez un fichier `.env.local` dans `apps/web/` :
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
+MONGODB_DB_NAME=tp-nextjs
+JWT_SECRET=votre-secret-jwt-unique
+```
+
+### Performances
+
+CodeSandbox peut être plus lent qu'un environnement local pour :
+- L'installation des dépendances
+- Le build des projets
+- Le rechargement à chaud (HMR)
+
+## 💡 Conseils
+
+### Sauvegarder votre travail
+
+1. **Fork le repository** depuis CodeSandbox pour créer votre propre copie
+2. **Commitez régulièrement** vos changements
+3. **Synchronisez avec GitHub** pour ne rien perdre
+
+### Optimiser les performances
+
+- Fermez les onglets inutiles du navigateur
+- Utilisez une connexion internet stable
+- Préférez travailler sur un seul projet à la fois (web OU doc)
+
+### En cas de problème
+
+1. **Rafraîchissez la page** (F5)
+2. **Redémarrez le conteneur** via le menu CodeSandbox
+3. **Supprimez `node_modules`** et relancez `pnpm install`
+4. **Créez un nouveau sandbox** à partir du repository GitHub
+
+## 🔗 Liens utiles
+
+- [Documentation CodeSandbox](https://codesandbox.io/docs)
+- [MongoDB Atlas](https://www.mongodb.com/atlas)
+- [Repository GitHub du projet](https://github.com/micmc422/TP-Nextjs-tw3)

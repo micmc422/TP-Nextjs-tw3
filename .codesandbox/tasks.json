@@ -1,0 +1,38 @@
+{
+  "$schema": "https://codesandbox.io/schemas/tasks.json",
+  "setupTasks": [
+    {
+      "name": "Install Dependencies",
+      "command": "pnpm install"
+    }
+  ],
+  "tasks": {
+    "dev": {
+      "name": "Development (Web + Doc)",
+      "command": "pnpm dev:app",
+      "runAtStart": true
+    },
+    "dev:web": {
+      "name": "Dev Web App",
+      "command": "pnpm --filter web dev",
+      "preview": {
+        "port": 3000
+      }
+    },
+    "dev:doc": {
+      "name": "Dev Documentation",
+      "command": "pnpm --filter doc dev",
+      "preview": {
+        "port": 3001
+      }
+    },
+    "build": {
+      "name": "Build All",
+      "command": "pnpm build"
+    },
+    "lint": {
+      "name": "Lint All",
+      "command": "pnpm lint"
+    }
+  }
+}
