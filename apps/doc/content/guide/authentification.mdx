@@ -1,0 +1,128 @@
+# Authentification
+
+Ce guide présente l'espace authentification du projet web, incluant la gestion des utilisateurs.
+
+## Présentation
+
+L'espace authentification permet de gérer les utilisateurs de l'application. Il comprend :
+
+- Une **page liste des utilisateurs** (`/utilisateur`) pour consulter tous les utilisateurs
+- Une **page détail utilisateur** (`/utilisateur/[id]`) pour voir les informations d'un utilisateur spécifique
+
+## Structure des dossiers
+
+```
+apps/web/app/
+└── utilisateur/
+    ├── page.tsx          # Liste des utilisateurs
+    └── [id]/
+        └── page.tsx      # Détail d'un utilisateur
+```
+
+## Pages Utilisateurs
+
+### Liste des utilisateurs (`/utilisateur`)
+
+Cette page affiche la liste de tous les utilisateurs enregistrés dans l'application.
+
+**Fonctionnalités :**
+- Affichage sous forme de table
+- Informations : nom, email, date de création
+- Lien vers la page de détail de chaque utilisateur
+- Bouton pour créer un nouvel utilisateur
+
+**Exemple de code :**
+
+```tsx
+import { listUsers } from "@workspace/database";
+
+export default async function UtilisateursPage() {
+  const users = await listUsers();
+  
+  return (
+    <Table>
+      {users.map((user) => (
+        <TableRow key={user._id}>
+          <TableCell>{user.name}</TableCell>
+          <TableCell>{user.email}</TableCell>
+        </TableRow>
+      ))}
+    </Table>
+  );
+}
+```
+
+### Page détail utilisateur (`/utilisateur/[id]`)
+
+Cette page affiche les informations détaillées d'un utilisateur spécifique.
+
+**Fonctionnalités :**
+- Affichage du nom et email
+- Dates de création et de mise à jour
+- Actions : modifier et supprimer (à implémenter)
+
+**Concepts Next.js utilisés :**
+- Routes dynamiques avec `[id]`
+- `generateMetadata` pour le SEO dynamique
+- `notFound()` pour les utilisateurs inexistants
+
+## Package @workspace/database
+
+Les données utilisateurs sont gérées par le package `@workspace/database` qui fournit :
+
+```tsx
+// Fonctions disponibles
+import {
+  createUser,      // Créer un utilisateur
+  findUserById,    // Trouver par ID
+  findUserByEmail, // Trouver par email
+  listUsers,       // Lister tous les utilisateurs
+  updateUser,      // Mettre à jour
+  deleteUser,      // Supprimer
+  countUsers,      // Compter
+} from "@workspace/database";
+```
+
+### Interface User
+
+```tsx
+interface User {
+  _id?: ObjectId;
+  email: string;
+  name: string;
+  password?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+## Navigation
+
+L'espace utilisateurs est accessible depuis le menu principal de l'application :
+- Menu "Utilisateurs" dans la barre de navigation
+- Accès direct via `/utilisateur`
+
+## Configuration MongoDB
+
+Pour utiliser les fonctionnalités de base de données, configurez les variables d'environnement :
+
+```env
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB_NAME=tp-nextjs
+```
+
+Démarrez MongoDB avec Docker :
+
+```bash
+docker-compose up -d
+```
+
+## Prochaines étapes
+
+Pour compléter l'authentification, vous pourrez implémenter :
+
+1. **Inscription** - Formulaire de création de compte
+2. **Connexion** - Authentification avec email/mot de passe
+3. **Session** - Gestion des sessions utilisateur
+4. **Protection des routes** - Middleware d'authentification
+5. **Récupération de mot de passe** - Flux de réinitialisation

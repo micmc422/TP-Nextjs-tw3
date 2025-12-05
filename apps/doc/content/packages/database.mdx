@@ -1,0 +1,190 @@
+# @workspace/database
+
+Le package `@workspace/database` fournit un client MongoDB et des modèles pour gérer les données de l'application.
+
+## Installation
+
+Ce package fait partie du monorepo et est automatiquement disponible via l'alias `@workspace/database`.
+
+## Configuration
+
+### Variables d'environnement
+
+```env
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB_NAME=tp-nextjs
+```
+
+### Docker
+
+Utilisez Docker Compose pour démarrer MongoDB :
+
+```bash
+docker-compose up -d
+```
+
+## Client MongoDB
+
+### Connexion
+
+```tsx
+import { getMongoClient, getDatabase, getCollection } from "@workspace/database";
+
+// Récupérer le client MongoDB
+const client = await getMongoClient();
+
+// Récupérer la base de données
+const db = await getDatabase();
+
+// Récupérer une collection typée
+const users = await getCollection<User>("users");
+```
+
+### Fonctions disponibles
+
+| Fonction | Description |
+|----------|-------------|
+| `getMongoClient()` | Récupère le client MongoDB (singleton) |
+| `getDatabase()` | Récupère la base de données principale |
+| `getCollection<T>(name)` | Récupère une collection typée |
+| `closeConnection()` | Ferme la connexion |
+| `checkConnection()` | Vérifie la connexion |
+
+## Modèle User
+
+### Interface
+
+```tsx
+interface User {
+  _id?: ObjectId;
+  email: string;
+  name: string;
+  password?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### Types utilitaires
+
+```tsx
+// Pour la création
+type CreateUserInput = Omit<User, '_id' | 'createdAt' | 'updatedAt'>;
+
+// Pour la mise à jour
+type UpdateUserInput = Partial<Omit<User, '_id' | 'createdAt' | 'updatedAt'>>;
+```
+
+### Opérations CRUD
+
+#### Créer un utilisateur
+
+```tsx
+import { createUser } from "@workspace/database";
+
+const newUser = await createUser({
+  email: "test@example.com",
+  name: "Test User",
+  password: "hashedPassword", // Toujours hasher avant !
+});
+```
+
+#### Trouver un utilisateur
+
+```tsx
+import { findUserById, findUserByEmail } from "@workspace/database";
+
+// Par ID
+const user = await findUserById("67abc123...");
+
+// Par email (utile pour l'authentification)
+const user = await findUserByEmail("test@example.com");
+```
+
+#### Lister les utilisateurs
+
+```tsx
+import { listUsers, countUsers } from "@workspace/database";
+
+// Liste paginée (20 résultats par défaut)
+const users = await listUsers(20, 0);
+
+// Nombre total
+const total = await countUsers();
+```
+
+#### Mettre à jour un utilisateur
+
+```tsx
+import { updateUser } from "@workspace/database";
+
+const updated = await updateUser("67abc123...", {
+  name: "Nouveau nom",
+});
+```
+
+#### Supprimer un utilisateur
+
+```tsx
+import { deleteUser } from "@workspace/database";
+
+const success = await deleteUser("67abc123...");
+```
+
+## Initialisation
+
+Au démarrage de l'application, initialisez les index :
+
+```tsx
+import { initializeUsersCollection } from "@workspace/database";
+
+// Crée les index nécessaires (email unique, etc.)
+await initializeUsersCollection();
+```
+
+## Bonnes pratiques
+
+1. **Hashage des mots de passe** - Utilisez bcrypt avant de stocker
+2. **Normalisation des emails** - Convertissez en minuscules
+3. **Gestion des erreurs** - Gérez les erreurs de connexion
+4. **Fermeture propre** - Appelez `closeConnection()` à l'arrêt
+
+## Structure du package
+
+```
+packages/database/
+├── src/
+│   ├── index.ts           # Exports principaux
+│   ├── mongodb-client.ts  # Client MongoDB singleton
+│   └── user.ts            # Modèle User et CRUD
+├── package.json
+└── tsconfig.json
+```
+
+## Exemple complet
+
+```tsx
+import {
+  createUser,
+  findUserByEmail,
+  listUsers,
+  checkConnection,
+} from "@workspace/database";
+
+// Vérifier la connexion
+const isConnected = await checkConnection();
+if (!isConnected) {
+  console.error("MongoDB non disponible");
+  return;
+}
+
+// Créer un utilisateur
+const user = await createUser({
+  email: "nouveau@example.com",
+  name: "Nouveau User",
+});
+
+// Récupérer tous les utilisateurs
+const allUsers = await listUsers();
+console.log(`${allUsers.length} utilisateurs trouvés`);
+```

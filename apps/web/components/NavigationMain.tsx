@@ -129,6 +129,19 @@ export function NavigationMain() {
             >
               Packages
             </Link>
+            {/* Sous-menu Utilisateurs */}
+            <div className="px-3 py-2">
+              <p className="text-sm font-semibold text-muted-foreground mb-2">Utilisateurs</p>
+              <div className="pl-3 space-y-1 border-l-2 border-muted">
+                <Link
+                  href="/utilisateur"
+                  className="block py-1.5 text-sm hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Liste des utilisateurs
+                </Link>
+              </div>
+            </div>
           </nav>
         )}
 
@@ -189,6 +202,30 @@ export function NavigationMain() {
                 <NavigationMenuLink href="/packages" className={navigationMenuTriggerStyle()}>
                   Packages
                 </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              {/* Menu déroulant Utilisateurs */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Utilisateurs</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 md:w-[400px]">
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                          href="/utilisateur"
+                        >
+                          <div className="mb-2 mt-4 text-lg font-medium">
+                            Liste des utilisateurs
+                          </div>
+                          <p className="text-sm leading-tight text-muted-foreground">
+                            Consultez et gérez les utilisateurs enregistrés dans l'application.
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
