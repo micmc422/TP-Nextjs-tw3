@@ -1,0 +1,37 @@
+# Docker Compose pour MongoDB - Environnement de développement local
+#
+# Ce fichier configure une instance MongoDB pour le développement local.
+# Il est destiné à introduire les concepts de base de données et d'authentification.
+#
+# Utilisation :
+#   docker compose up -d    # Démarre MongoDB en arrière-plan
+#   docker compose down     # Arrête MongoDB
+#   docker compose logs     # Affiche les logs
+#
+# Connexion :
+#   URI : mongodb://localhost:27017
+#   Base de données : tp-nextjs
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: tp-nextjs-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      # En développement, pas d'authentification pour simplifier
+      # En production, utiliser MONGO_INITDB_ROOT_USERNAME et MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE: tp-nextjs
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongodb_data:
+    driver: local
