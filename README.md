@@ -2,6 +2,14 @@
 
 Ce modèle est conçu pour créer un monorepo avec shadcn/ui.
 
+## 🌐 Ouvrir dans CodeSandbox
+
+Vous pouvez travailler sur ce projet directement dans votre navigateur avec CodeSandbox :
+
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/micmc422/TP-Nextjs-tw3)
+
+> 💡 C'est la solution idéale si un poste universitaire est indisponible ou dysfonctionnel.
+
 ## Utilisation
 
 ```bash
