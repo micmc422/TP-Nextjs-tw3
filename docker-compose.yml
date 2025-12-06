@@ -3,7 +3,7 @@ services:
     image: mcr.microsoft.com/devcontainers/typescript-node:20
     container_name: tp-nextjs-app
     volumes:
-      - ..:/workspace:cached
+      - .:/workspace:cached
     working_dir: /workspace
     command: sleep infinity
     environment:
