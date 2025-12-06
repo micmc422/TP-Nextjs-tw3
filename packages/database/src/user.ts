@@ -12,7 +12,7 @@
  */
 
 import { ObjectId, WithId } from 'mongodb';
-import { getCollection } from './mongodb-client.ts';
+import { getCollection } from './mongodb-client';
 
 /**
  * Interface représentant un utilisateur dans la base de données

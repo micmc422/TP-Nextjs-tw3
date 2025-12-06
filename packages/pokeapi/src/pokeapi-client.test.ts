@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PokeAPI } from './pokeapi-client.js';
+import { PokeAPI } from './pokeapi-client';
 
 // Mock global fetch
 const fetchMock = vi.fn();

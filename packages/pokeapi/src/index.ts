@@ -1,1 +1,1 @@
-export * from './pokeapi-client.js';
+export * from './pokeapi-client';
