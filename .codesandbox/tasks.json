@@ -11,7 +11,7 @@
     },
     {
       "name": "Build Packages",
-      "command": "pnpm --filter=./packages/* build"
+      "command": "pnpm exec turbo build --filter='./packages/*'"
     },
     {
       "name": "Pull Docker Images",
