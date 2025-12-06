@@ -17,7 +17,7 @@ export {
   getCollection,
   closeConnection,
   checkConnection,
-} from './mongodb-client.ts';
+} from './mongodb-client.js';
 
 // Export du modèle User et ses types
 export {
@@ -29,13 +29,13 @@ export {
   deleteUser,
   countUsers,
   initializeUsersCollection,
-} from './user.ts';
+} from './user.js';
 
 export type {
   User,
   CreateUserInput,
   UpdateUserInput,
-} from './user.ts';
+} from './user.js';
 
 // Export de ObjectId pour la validation des IDs
 export { ObjectId } from 'mongodb';
