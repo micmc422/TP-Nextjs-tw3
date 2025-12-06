@@ -1,0 +1,51 @@
+{
+  "name": "TP-Nextjs-tw3 Dev Container",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  
+  // Forward ports
+  "forwardPorts": [3000, 3001, 27017],
+  "portsAttributes": {
+    "3000": {
+      "label": "Web App",
+      "onAutoForward": "notify"
+    },
+    "3001": {
+      "label": "Documentation",
+      "onAutoForward": "notify"
+    },
+    "27017": {
+      "label": "MongoDB",
+      "onAutoForward": "silent"
+    }
+  },
+  
+  // VS Code customizations
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "mongodb.mongodb-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      }
+    }
+  },
+  
+  // Install dependencies on container creation
+  "postCreateCommand": "corepack enable && pnpm install && pnpm --filter=./packages/* build",
+  
+  // Environment variables
+  "remoteEnv": {
+    "MONGODB_URI": "mongodb://mongodb:27017",
+    "MONGODB_DB_NAME": "tp-nextjs"
+  }
+}

@@ -1,0 +1,38 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:20
+    container_name: tp-nextjs-app
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DB_NAME: tp-nextjs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    network_mode: service:mongodb
+
+  mongodb:
+    image: mongo:7.0
+    container_name: tp-nextjs-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      MONGO_INITDB_DATABASE: tp-nextjs
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongodb_data:
+    driver: local
