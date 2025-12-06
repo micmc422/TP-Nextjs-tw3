@@ -1,23 +1,25 @@
 {
-  "$schema": "https://codesandbox.io/schemas/tasks.json",
+  // These tasks will run in order when initializing your CodeSandbox project.
   "setupTasks": [
     {
-      "name": "Enable Corepack",
-      "command": "corepack enable"
+      "command": "corepack enable",
+      "name": "Enable Corepack"
     },
     {
-      "name": "Install Dependencies",
-      "command": "pnpm install"
+      "command": "pnpm install",
+      "name": "Install Dependencies"
     },
     {
-      "name": "Build Packages",
-      "command": "pnpm exec turbo build --filter='./packages/*'"
+      "command": "pnpm --filter=./packages/* build",
+      "name": "Build Packages"
     },
     {
-      "name": "Pull Docker Images",
-      "command": "docker compose pull"
+      "command": "docker compose pull",
+      "name": "Pull Docker Images"
     }
   ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
   "tasks": {
     "dev": {
       "name": "Dev (All Apps)",
