@@ -2,8 +2,16 @@
   "$schema": "https://codesandbox.io/schemas/tasks.json",
   "setupTasks": [
     {
+      "name": "Enable Corepack",
+      "command": "corepack enable"
+    },
+    {
       "name": "Install Dependencies",
       "command": "pnpm install"
+    },
+    {
+      "name": "Build Packages",
+      "command": "pnpm build --filter=./packages/*"
     },
     {
       "name": "Pull Docker Images",

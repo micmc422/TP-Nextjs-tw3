@@ -8,6 +8,9 @@
       ],
       "@workspace/ui/*": [
         "../../packages/ui/src/*"
+      ],
+      "@workspace/database": [
+        "../../packages/database/src/index.ts"
       ]
     },
     "plugins": [
