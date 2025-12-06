@@ -2,7 +2,7 @@
   "name": "TP-Nextjs-tw3 Dev Container",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace/TP-Nextjs-tw3",
+  "workspaceFolder": "/workspace",
   // Forward ports
   "forwardPorts": [
     3000,
