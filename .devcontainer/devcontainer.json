@@ -2,10 +2,13 @@
   "name": "TP-Nextjs-tw3 Dev Container",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
-  
+  "workspaceFolder": "/workspace/TP-Nextjs-tw3",
   // Forward ports
-  "forwardPorts": [3000, 3001, 27017],
+  "forwardPorts": [
+    3000,
+    3001,
+    27017
+  ],
   "portsAttributes": {
     "3000": {
       "label": "Web App",
@@ -20,7 +23,6 @@
       "onAutoForward": "silent"
     }
   },
-  
   // VS Code customizations
   "customizations": {
     "vscode": {
@@ -39,10 +41,8 @@
       }
     }
   },
-  
   // Install dependencies on container creation
   "postCreateCommand": "corepack enable && pnpm install && pnpm --filter=./packages/* build",
-  
   // Environment variables
   "remoteEnv": {
     "MONGODB_URI": "mongodb://mongodb:27017",
