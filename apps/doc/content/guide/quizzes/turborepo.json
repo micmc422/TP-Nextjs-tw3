@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - Turborepo",
+  "description": "Testez vos connaissances sur Turborepo et la gestion des builds",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quel est le principal problème que Turborepo résout dans un monorepo ?",
+      "options": [
+        "La gestion des versions",
+        "La lenteur des builds",
+        "La sécurité",
+        "Le déploiement"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Turborepo résout le problème de lenteur en ne rebuildant que ce qui a changé grâce à son système de cache intelligent."
+    },
+    {
+      "id": 2,
+      "question": "Quel fichier contient la configuration de Turborepo ?",
+      "options": [
+        "turborepo.config.json",
+        "turbo.json",
+        "turbo.config.js",
+        "turborepo.json"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le fichier turbo.json à la racine du projet contient toute la configuration de Turborepo."
+    },
+    {
+      "id": 3,
+      "question": "Dans turbo.json, que signifie 'dependsOn: [\"^build\"]' ?",
+      "options": [
+        "Dépend du build précédent",
+        "Dépend du build de tous les packages",
+        "Build les dépendances d'abord",
+        "Build de manière circulaire"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le symbole ^ indique que les dépendances doivent être buildées en premier avant le package courant."
+    },
+    {
+      "id": 4,
+      "question": "Où Turborepo stocke-t-il son cache local par défaut ?",
+      "options": [
+        ".turbo/",
+        "node_modules/.turbo/",
+        "node_modules/.cache/turbo",
+        ".cache/turbo/"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Par défaut, Turborepo stocke son cache dans node_modules/.cache/turbo pour un accès rapide."
+    },
+    {
+      "id": 5,
+      "question": "Pourquoi la tâche 'dev' a-t-elle 'cache: false' dans la configuration ?",
+      "options": [
+        "Pour économiser de l'espace disque",
+        "Parce que le développement doit toujours être frais",
+        "Pour améliorer les performances",
+        "C'est une erreur de configuration"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "En mode développement, on veut toujours avoir les dernières modifications sans cache pour un rechargement à chaud efficace."
+    },
+    {
+      "id": 6,
+      "question": "Quelle commande permet de voir le graphe de dépendances de Turborepo ?",
+      "options": [
+        "pnpm turbo graph",
+        "pnpm turbo build --graph",
+        "pnpm turbo show-graph",
+        "pnpm turbo dependencies"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "La commande 'pnpm turbo build --graph' génère un fichier .png montrant le graphe de dépendances."
+    },
+    {
+      "id": 7,
+      "question": "Que représente le champ 'outputs' dans la configuration d'une tâche ?",
+      "options": [
+        "Les fichiers de log",
+        "Les fichiers générés à mettre en cache",
+        "Les variables d'environnement",
+        "Les dépendances externes"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Le champ 'outputs' définit quels fichiers générés doivent être mis en cache, comme '.next/**' pour Next.js."
+    },
+    {
+      "id": 8,
+      "question": "Que signifie 'persistent: true' pour une tâche dans turbo.json ?",
+      "options": [
+        "La tâche est sauvegardée dans le cache",
+        "La tâche tourne en continu (comme un serveur dev)",
+        "La tâche ne peut pas être interrompue",
+        "La tâche s'exécute au démarrage"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "'persistent: true' indique que la tâche est un processus long (comme 'pnpm dev') qui tourne en continu."
+    },
+    {
+      "id": 9,
+      "question": "Comment Turborepo optimise-t-il l'exécution des tâches ?",
+      "options": [
+        "En les exécutant séquentiellement",
+        "En utilisant plusieurs threads",
+        "En exécutant les tâches indépendantes en parallèle",
+        "En les exécutant dans le cloud"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Turborepo maximise l'utilisation du CPU en exécutant les tâches indépendantes en parallèle selon le graphe de dépendances."
+    }
+  ]
+}

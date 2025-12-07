@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - Architecture du projet",
+  "description": "Testez vos connaissances sur l'architecture monorepo et la structure du projet",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quel outil est utilisé pour gérer le monorepo dans ce projet ?",
+      "options": [
+        "Lerna",
+        "Turborepo",
+        "Nx",
+        "Rush"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le projet utilise Turborepo pour gérer le monorepo, comme décrit dans la documentation."
+    },
+    {
+      "id": 2,
+      "question": "Combien d'applications principales sont présentes dans le dossier 'apps/' ?",
+      "options": [
+        "1 application",
+        "2 applications (web et doc)",
+        "3 applications",
+        "4 applications"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le projet contient deux applications : 'web' (l'application Next.js principale) et 'doc' (la documentation Nextra)."
+    },
+    {
+      "id": 3,
+      "question": "Quel est le nom du package qui contient les composants UI partagés ?",
+      "options": [
+        "@workspace/components",
+        "@workspace/ui",
+        "@workspace/design",
+        "@workspace/shared-ui"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "@workspace/ui est le package contenant les composants UI partagés basés sur shadcn/ui."
+    },
+    {
+      "id": 4,
+      "question": "Quel fichier configure les packages du monorepo ?",
+      "options": [
+        "package.json",
+        "turbo.json",
+        "pnpm-workspace.yaml",
+        "workspace.config.js"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Le fichier pnpm-workspace.yaml définit les packages du monorepo avec la structure 'apps/*' et 'packages/*'."
+    },
+    {
+      "id": 5,
+      "question": "Quel avantage principal offre l'architecture monorepo pour ce projet ?",
+      "options": [
+        "Déploiement plus rapide",
+        "Partage de code et cohérence entre applications",
+        "Réduction de la taille du code",
+        "Meilleure sécurité"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "L'architecture monorepo permet le partage de code entre applications, une configuration centralisée et une meilleure cohérence du projet."
+    },
+    {
+      "id": 6,
+      "question": "Quelle est la fonction principale du package @workspace/database ?",
+      "options": [
+        "Gérer les formulaires",
+        "Gérer la persistance des données avec MongoDB",
+        "Gérer les appels API",
+        "Gérer le cache"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "Le package @workspace/database fournit un client MongoDB et des modèles pour gérer la persistance des utilisateurs."
+    },
+    {
+      "id": 7,
+      "question": "Dans l'architecture monorepo, comment les packages internes sont-ils référencés ?",
+      "options": [
+        "Par chemin relatif uniquement",
+        "Via npm install",
+        "Via l'alias @workspace/*",
+        "Via des liens symboliques manuels"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Les packages internes utilisent l'alias @workspace/* pour être référencés de manière cohérente dans tout le monorepo."
+    },
+    {
+      "id": 8,
+      "question": "Quel pattern architectural est utilisé pour le client MongoDB dans @workspace/database ?",
+      "options": [
+        "Factory Pattern",
+        "Observer Pattern",
+        "Singleton Pattern",
+        "Strategy Pattern"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Le package database utilise le pattern Singleton pour garantir une seule instance de connexion MongoDB réutilisée dans toute l'application."
+    },
+    {
+      "id": 9,
+      "question": "Pourquoi l'isolation des packages est-elle un avantage dans cette architecture ?",
+      "options": [
+        "Elle réduit la taille du bundle final",
+        "Elle permet à chaque package d'avoir ses propres dépendances sans conflit",
+        "Elle améliore les performances du build",
+        "Elle facilite le déploiement"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "L'isolation permet à chaque package d'avoir ses propres dépendances, évitant les conflits et permettant des versions différentes si nécessaire."
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - @workspace/database",
+  "description": "Testez vos connaissances sur MongoDB et la gestion des données",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quelle version de MongoDB est utilisée dans ce projet ?",
+      "options": [
+        "MongoDB 5",
+        "MongoDB 6",
+        "MongoDB 7",
+        "MongoDB 8"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le projet utilise MongoDB 7 via Docker, comme spécifié dans docker-compose.yml."
+    },
+    {
+      "id": 2,
+      "question": "Quel pattern de conception est utilisé pour le client MongoDB ?",
+      "options": [
+        "Factory Pattern",
+        "Singleton Pattern",
+        "Observer Pattern",
+        "Builder Pattern"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le package database utilise le pattern Singleton pour garantir une seule instance de connexion MongoDB."
+    },
+    {
+      "id": 3,
+      "question": "Quelle fonction permet de récupérer un utilisateur par son email ?",
+      "options": [
+        "getUserByEmail()",
+        "findUserByEmail()",
+        "getUser()",
+        "findByEmail()"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "La fonction findUserByEmail() recherche un utilisateur par son adresse email dans la collection."
+    },
+    {
+      "id": 4,
+      "question": "Quel est le nombre minimum de connexions dans le pool MongoDB ?",
+      "options": [
+        "1 connexion",
+        "2 connexions",
+        "5 connexions",
+        "10 connexions"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "Le pool MongoDB est configuré avec un minimum de 2 connexions et un maximum de 10 connexions."
+    },
+    {
+      "id": 5,
+      "question": "Pourquoi findUserByEmail() inclut-il le mot de passe alors que findUserById() l'exclut ?",
+      "options": [
+        "C'est un bug",
+        "Pour l'authentification lors de la connexion",
+        "Pour économiser des ressources",
+        "Par convention MongoDB"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "findUserByEmail() inclut le mot de passe car il est utilisé lors de l'authentification pour vérifier les credentials."
+    },
+    {
+      "id": 6,
+      "question": "Quel type d'index est créé sur le champ email ?",
+      "options": [
+        "Index simple",
+        "Index composite",
+        "Index unique",
+        "Index texte"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Un index unique est créé sur l'email pour empêcher les doublons et garantir l'unicité des adresses email."
+    },
+    {
+      "id": 7,
+      "question": "Que se passe-t-il si on essaie de créer un utilisateur avec un email déjà existant ?",
+      "options": [
+        "L'utilisateur est créé avec un email modifié",
+        "Une erreur avec le code 11000 est levée",
+        "L'ancien utilisateur est écrasé",
+        "Rien ne se passe"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "MongoDB lève une erreur avec le code 11000 (duplicate key error) lors de la violation de l'index unique."
+    },
+    {
+      "id": 8,
+      "question": "Quelle est la bonne pratique pour fermer la connexion MongoDB ?",
+      "options": [
+        "La fermer après chaque opération",
+        "Ne jamais la fermer",
+        "La fermer à l'arrêt de l'application (SIGTERM)",
+        "La fermer toutes les heures"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Il faut appeler closeConnection() lors de l'arrêt de l'application (SIGTERM) pour libérer proprement les ressources."
+    },
+    {
+      "id": 9,
+      "question": "Pourquoi les emails sont-ils automatiquement normalisés (minuscules + trim) ?",
+      "options": [
+        "Pour économiser de l'espace",
+        "Pour éviter les doublons dus à la casse ou aux espaces",
+        "C'est une exigence MongoDB",
+        "Pour améliorer les performances"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "La normalisation évite les doublons comme 'user@test.com' et '  USER@TEST.COM  ' qui sont le même email."
+    }
+  ]
+}

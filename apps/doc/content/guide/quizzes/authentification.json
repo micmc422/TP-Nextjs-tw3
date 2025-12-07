@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - Authentification",
+  "description": "Testez vos connaissances sur le système d'authentification JWT et la sécurité",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quelle librairie est utilisée pour gérer les JWT dans ce projet ?",
+      "options": [
+        "jsonwebtoken",
+        "jose",
+        "jwt-simple",
+        "express-jwt"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le projet utilise la librairie 'jose' pour la création, vérification et signature des JWT."
+    },
+    {
+      "id": 2,
+      "question": "Combien de rounds de salt sont utilisés pour le hachage bcrypt ?",
+      "options": [
+        "5 rounds",
+        "10 rounds",
+        "15 rounds",
+        "20 rounds"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le projet utilise 10 rounds de salt pour bcrypt, un bon équilibre entre sécurité et performance."
+    },
+    {
+      "id": 3,
+      "question": "Quelle est la durée de validité d'une session JWT ?",
+      "options": [
+        "1 jour",
+        "3 jours",
+        "7 jours",
+        "30 jours"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Les sessions JWT sont valides pendant 7 jours après leur création."
+    },
+    {
+      "id": 4,
+      "question": "Pourquoi les cookies de session utilisent-ils l'attribut HTTP-only ?",
+      "options": [
+        "Pour améliorer les performances",
+        "Pour empêcher l'accès JavaScript côté client",
+        "Pour réduire la taille du cookie",
+        "Pour le support multi-domaines"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "L'attribut HTTP-only rend les cookies inaccessibles au JavaScript côté client, protégeant contre les attaques XSS."
+    },
+    {
+      "id": 5,
+      "question": "Quelle fonction doit-on utiliser pour vérifier si un utilisateur est authentifié ?",
+      "options": [
+        "checkAuth()",
+        "getSession()",
+        "verifyToken()",
+        "isAuthenticated()"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "La fonction getSession() récupère la session courante depuis le cookie JWT et retourne null si non authentifié."
+    },
+    {
+      "id": 6,
+      "question": "Pourquoi les emails sont-ils normalisés en minuscules ?",
+      "options": [
+        "Pour l'esthétique",
+        "Pour éviter les doublons (user@test.com vs USER@test.com)",
+        "Pour la compatibilité base de données",
+        "C'est une convention JavaScript"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "La normalisation en minuscules évite la création de comptes en double avec le même email mais une casse différente."
+    },
+    {
+      "id": 7,
+      "question": "Quelle fonction de @workspace/database inclut le mot de passe dans le résultat ?",
+      "options": [
+        "findUserById()",
+        "findUserByEmail()",
+        "listUsers()",
+        "getAllUsers()"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Seul findUserByEmail() inclut le mot de passe car il est utilisé pour l'authentification. Les autres fonctions l'excluent par sécurité."
+    },
+    {
+      "id": 8,
+      "question": "Quel attribut de cookie protège contre les attaques CSRF ?",
+      "options": [
+        "HttpOnly",
+        "Secure",
+        "SameSite=lax",
+        "Domain"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "L'attribut SameSite=lax protège contre les attaques CSRF en limitant l'envoi du cookie aux requêtes same-site."
+    },
+    {
+      "id": 9,
+      "question": "Pourquoi utilise-t-on le message 'Identifiants invalides' plutôt que 'Email inexistant' ou 'Mot de passe incorrect' ?",
+      "options": [
+        "Pour simplifier le code",
+        "Pour ne pas révéler si un email existe dans la base",
+        "Pour économiser de l'espace",
+        "C'est une exigence légale"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Un message générique empêche les attaquants de découvrir quels emails sont enregistrés en testant différentes adresses."
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - @workspace/form",
+  "description": "Testez vos connaissances sur la gestion des formulaires et Zod",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quelle bibliothèque est utilisée pour la validation des formulaires ?",
+      "options": [
+        "Yup",
+        "Joi",
+        "Zod",
+        "Ajv"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le package @workspace/form utilise Zod pour la validation des schémas de formulaires."
+    },
+    {
+      "id": 2,
+      "question": "Quel composant affiche les messages d'erreur de validation ?",
+      "options": [
+        "FormError",
+        "FormMessage",
+        "FormAlert",
+        "FormWarning"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le composant FormMessage affiche automatiquement les messages d'erreur de validation pour un champ."
+    },
+    {
+      "id": 3,
+      "question": "Quelle fonction permet d'enregistrer un champ de formulaire avec useForm ?",
+      "options": [
+        "connect()",
+        "bind()",
+        "register()",
+        "attach()"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "La fonction register() du hook useForm connecte les champs au formulaire et gère leurs événements."
+    },
+    {
+      "id": 4,
+      "question": "Quelle propriété du hook useForm indique si le formulaire est en cours de soumission ?",
+      "options": [
+        "submitting",
+        "isSubmitting",
+        "loading",
+        "pending"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "La propriété isSubmitting indique si le formulaire est actuellement en cours de soumission."
+    },
+    {
+      "id": 5,
+      "question": "Comment définir une validation d'email avec Zod ?",
+      "options": [
+        "z.string().validateEmail()",
+        "z.email()",
+        "z.string().email()",
+        "z.string().isEmail()"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Zod utilise z.string().email() pour valider qu'une chaîne est un email valide."
+    },
+    {
+      "id": 6,
+      "question": "Pourquoi affiche-t-on les erreurs seulement après que le champ a été 'touched' ?",
+      "options": [
+        "Pour économiser des ressources",
+        "Pour une meilleure expérience utilisateur",
+        "C'est obligatoire avec Zod",
+        "Pour éviter les bugs"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "Afficher les erreurs seulement après 'touched' évite de frustrer l'utilisateur avec des erreurs avant qu'il n'ait fini de remplir le champ."
+    },
+    {
+      "id": 7,
+      "question": "Comment créer une validation conditionnelle avec Zod (ex: téléphone requis si hasPhone est true) ?",
+      "options": [
+        "Avec .conditional()",
+        "Avec .refine()",
+        "Avec .when()",
+        "Avec .if()"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "La méthode .refine() permet d'ajouter des validations personnalisées et conditionnelles complexes."
+    },
+    {
+      "id": 8,
+      "question": "Quel pattern architectural est utilisé pour partager l'état du formulaire entre composants ?",
+      "options": [
+        "Redux Pattern",
+        "Observer Pattern",
+        "Context Pattern",
+        "Singleton Pattern"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Le package utilise le Context Pattern de React (via useFormContext) pour partager l'état du formulaire."
+    },
+    {
+      "id": 9,
+      "question": "Comment valider un mot de passe qui doit contenir au moins une majuscule avec Zod ?",
+      "options": [
+        "z.string().uppercase()",
+        "z.string().regex(/[A-Z]/)",
+        "z.string().hasUppercase()",
+        "z.string().match(/[A-Z]/)"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Zod utilise .regex() avec une expression régulière pour valider la présence d'au moins une majuscule."
+    }
+  ]
+}

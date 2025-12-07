@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - @workspace/ui",
+  "description": "Testez vos connaissances sur les composants UI et shadcn/ui",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Sur quelle bibliothèque de composants est basé @workspace/ui ?",
+      "options": [
+        "Material-UI",
+        "Ant Design",
+        "shadcn/ui",
+        "Chakra UI"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le package @workspace/ui est basé sur shadcn/ui, une collection de composants réutilisables."
+    },
+    {
+      "id": 2,
+      "question": "Quelle commande permet d'ajouter un nouveau composant shadcn/ui au projet ?",
+      "options": [
+        "pnpm add shadcn button",
+        "pnpm dlx shadcn@latest add button -c apps/web",
+        "npx shadcn add button",
+        "pnpm install @shadcn/button"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "La commande 'pnpm dlx shadcn@latest add button -c apps/web' ajoute un composant au package ui."
+    },
+    {
+      "id": 3,
+      "question": "Combien de variantes différentes le composant Button possède-t-il ?",
+      "options": [
+        "4 variantes",
+        "5 variantes",
+        "6 variantes",
+        "7 variantes"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le Button a 6 variantes : default, destructive, outline, secondary, ghost, et link."
+    },
+    {
+      "id": 4,
+      "question": "Quel composant est utilisé pour afficher des placeholders de chargement animés ?",
+      "options": [
+        "Loading",
+        "Spinner",
+        "Skeleton",
+        "Placeholder"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Le composant Skeleton affiche des placeholders animés pendant le chargement des données."
+    },
+    {
+      "id": 5,
+      "question": "Quelle bibliothèque est utilisée pour les graphiques dans le composant Chart ?",
+      "options": [
+        "Chart.js",
+        "D3.js",
+        "Recharts",
+        "Victory"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Les composants Chart utilisent Recharts pour créer des graphiques interactifs."
+    },
+    {
+      "id": 6,
+      "question": "Quel est le rôle de la fonction utilitaire cn() ?",
+      "options": [
+        "Créer de nouveaux composants",
+        "Fusionner des classes CSS conditionnellement",
+        "Connecter à la base de données",
+        "Normaliser les noms"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "La fonction cn() fusionne des classes CSS et gère les classes conditionnelles de manière élégante."
+    },
+    {
+      "id": 7,
+      "question": "Quelle prop permet au Button d'utiliser un composant enfant comme élément racine ?",
+      "options": [
+        "component",
+        "as",
+        "asChild",
+        "render"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "La prop 'asChild' permet au Button d'utiliser son composant enfant comme élément racine via Radix UI Slot."
+    },
+    {
+      "id": 8,
+      "question": "Dans le composant Card, quel sous-composant est optionnel et sert de description ?",
+      "options": [
+        "CardSubtitle",
+        "CardDescription",
+        "CardInfo",
+        "CardText"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "CardDescription est le composant optionnel utilisé pour afficher une description sous le titre de la carte."
+    },
+    {
+      "id": 9,
+      "question": "Où doivent être placés les fichiers de styles globaux importés depuis @workspace/ui ?",
+      "options": [
+        "Dans chaque composant",
+        "Dans le layout racine de l'application",
+        "Dans turbo.json",
+        "Dans package.json"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Les styles globaux (@workspace/ui/globals.css) doivent être importés dans le layout racine pour être appliqués à toute l'application."
+    }
+  ]
+}

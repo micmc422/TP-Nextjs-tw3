@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - @workspace/pokeapi",
+  "description": "Testez vos connaissances sur l'API Pokémon et le client HTTP",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Quelle API externe est utilisée par le package @workspace/pokeapi ?",
+      "options": [
+        "Pokemon API v1",
+        "PokeAPI (pokeapi.co)",
+        "Pokemon Data API",
+        "Nintendo API"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Le package utilise l'API publique PokeAPI disponible sur pokeapi.co."
+    },
+    {
+      "id": 2,
+      "question": "Quelle méthode permet de récupérer les détails d'un Pokémon par son nom ?",
+      "options": [
+        "PokeAPI.get('pikachu')",
+        "PokeAPI.pokemon('pikachu')",
+        "PokeAPI.fetchPokemon('pikachu')",
+        "PokeAPI.getPokemon('pikachu')"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "La méthode PokeAPI.pokemon() accepte un nom ou un ID pour récupérer les données d'un Pokémon."
+    },
+    {
+      "id": 3,
+      "question": "Combien de Pokémon sont retournés par défaut avec listPokemon() ?",
+      "options": [
+        "10",
+        "20",
+        "50",
+        "100"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Par défaut, listPokemon() retourne 20 Pokémon par page si aucun limit n'est spécifié."
+    },
+    {
+      "id": 4,
+      "question": "Quel type TypeScript représente une réponse paginée de l'API ?",
+      "options": [
+        "PaginatedResult<T>",
+        "Paginated<T>",
+        "PagedResponse<T>",
+        "ApiPage<T>"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "Le type Paginated<T> structure les réponses paginées avec count, next, previous et results."
+    },
+    {
+      "id": 5,
+      "question": "Pourquoi searchPokemonByName() n'est-il pas recommandé pour de grandes recherches ?",
+      "options": [
+        "Il est trop lent",
+        "Il charge tous les Pokémon puis filtre côté client",
+        "Il ne fonctionne pas correctement",
+        "Il nécessite une clé API"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "searchPokemonByName() charge tous les Pokémon en mémoire puis filtre, ce qui n'est pas performant pour de grandes listes."
+    },
+    {
+      "id": 6,
+      "question": "Quelle méthode permet de récupérer tous les Pokémon d'un type spécifique (ex: feu) ?",
+      "options": [
+        "PokeAPI.filterByType('fire')",
+        "PokeAPI.getPokemonByType('fire')",
+        "PokeAPI.pokemonOfType('fire')",
+        "PokeAPI.type('fire').pokemon"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "getPokemonByType() récupère tous les Pokémon d'un type donné en interrogeant l'endpoint des types."
+    },
+    {
+      "id": 7,
+      "question": "Comment optimiser les requêtes répétées au même Pokémon dans Next.js ?",
+      "options": [
+        "Utiliser localStorage",
+        "Utiliser unstable_cache de Next.js",
+        "Créer un cache manuel",
+        "Utiliser Redux"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "unstable_cache de Next.js permet de cacher les résultats côté serveur avec revalidation automatique."
+    },
+    {
+      "id": 8,
+      "question": "Que se passe-t-il si on appelle PokeAPI.pokemon('invalid-name') ?",
+      "options": [
+        "Retourne null",
+        "Retourne un objet vide",
+        "Lève une erreur",
+        "Retourne undefined"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "Le client lève une erreur si la requête échoue, qu'il faut gérer avec try/catch."
+    },
+    {
+      "id": 9,
+      "question": "Quelle est la meilleure pratique pour identifier un Pokémon : nom ou ID ?",
+      "options": [
+        "Le nom car plus lisible",
+        "L'ID car plus performant et stable",
+        "Les deux sont équivalents",
+        "Dépend de la version de l'API"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "L'ID est préférable car il est stable, plus performant et ne change jamais, contrairement aux noms qui peuvent varier selon la langue."
+    }
+  ]
+}

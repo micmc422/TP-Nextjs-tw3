@@ -1,0 +1,123 @@
+{
+  "title": "Quiz - Next.js App Router",
+  "description": "Testez vos connaissances sur Next.js 15 et l'App Router",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Par défaut, quel type de composants sont créés dans le App Router ?",
+      "options": [
+        "Client Components",
+        "Server Components",
+        "Hybrid Components",
+        "Static Components"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "Par défaut, tous les composants dans le App Router sont des Server Components, s'exécutant côté serveur."
+    },
+    {
+      "id": 2,
+      "question": "Quelle directive doit être ajoutée au début d'un fichier pour créer un Client Component ?",
+      "options": [
+        "'use browser'",
+        "'use client'",
+        "'client-side'",
+        "'browser-component'"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "facile",
+      "explanation": "La directive 'use client' doit être ajoutée en haut du fichier pour indiquer qu'il s'agit d'un Client Component."
+    },
+    {
+      "id": 3,
+      "question": "Quel fichier définit une route accessible dans Next.js App Router ?",
+      "options": [
+        "route.tsx",
+        "index.tsx",
+        "page.tsx",
+        "view.tsx"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "facile",
+      "explanation": "Le fichier page.tsx définit une route accessible dans le système de routage de Next.js."
+    },
+    {
+      "id": 4,
+      "question": "Quel est l'avantage principal des Server Components ?",
+      "options": [
+        "Meilleure interactivité",
+        "Accès aux APIs navigateur",
+        "Bundle JavaScript plus léger et meilleur SEO",
+        "Utilisation de useState"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expérimenté",
+      "explanation": "Les Server Components permettent un bundle JavaScript plus léger, un meilleur SEO et un accès direct aux données côté serveur."
+    },
+    {
+      "id": 5,
+      "question": "Comment créer une route dynamique pour afficher un Pokémon par son nom ?",
+      "options": [
+        "app/pokemon/:name/page.tsx",
+        "app/pokemon/[name]/page.tsx",
+        "app/pokemon/{name}/page.tsx",
+        "app/pokemon/<name>/page.tsx"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "Les crochets [name] définissent un paramètre de route dynamique dans Next.js App Router."
+    },
+    {
+      "id": 6,
+      "question": "Quelle option de fetch permet de ne pas mettre en cache les données ?",
+      "options": [
+        "{ cache: 'no-cache' }",
+        "{ cache: 'no-store' }",
+        "{ cache: 'disabled' }",
+        "{ cache: 'none' }"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expérimenté",
+      "explanation": "L'option { cache: 'no-store' } désactive complètement le cache pour une requête fetch."
+    },
+    {
+      "id": 7,
+      "question": "Dans Next.js 15, comment accède-t-on aux paramètres d'une route dynamique ?",
+      "options": [
+        "Les paramètres sont directement accessibles de manière synchrone",
+        "Les paramètres sont une Promise qui doit être await",
+        "Via useParams() hook",
+        "Via getServerSideProps"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Dans Next.js 15, params est une Promise qui doit être await avant d'accéder aux valeurs : const { name } = await params"
+    },
+    {
+      "id": 8,
+      "question": "Quel est le rôle des routes groupées avec parenthèses dans App Router ?",
+      "options": [
+        "Créer des routes protégées",
+        "Organiser les fichiers sans affecter l'URL",
+        "Créer des routes dynamiques",
+        "Définir des middlewares"
+      ],
+      "correctAnswer": 1,
+      "difficulty": "expert",
+      "explanation": "Les routes groupées avec parenthèses (marketing) permettent d'organiser les fichiers sans affecter la structure de l'URL."
+    },
+    {
+      "id": 9,
+      "question": "Quelle fonction permet de générer des métadonnées dynamiques pour une page ?",
+      "options": [
+        "createMetadata",
+        "getMetadata",
+        "generateMetadata",
+        "setMetadata"
+      ],
+      "correctAnswer": 2,
+      "difficulty": "expert",
+      "explanation": "generateMetadata est une fonction async qui permet de créer des métadonnées dynamiques basées sur les paramètres de la route."
+    }
+  ]
+}
